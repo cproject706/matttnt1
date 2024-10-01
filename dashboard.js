@@ -900,14 +900,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     itemDetails.seniors = item.querySelector('.mb-0:nth-child(5)').textContent;
                     itemDetails.kids = item.querySelector('.mb-0:nth-child(6)').textContent;
 
-                    const totalPriceText = item.querySelector('strong:last-child').textContent.replace('₱', '').replace(',', '');
+                    const totalPriceText = item.querySelector('.mb-0:nth-child(8)').textContent.replace('Total Price: ₱', '');
                     const totalItemPrice = parseFloat(totalPriceText) || 0;
                     itemDetails.totalPrice = totalItemPrice;
                     totalAmount += totalItemPrice; // Add item total to overall total
                 } else if (category === 'meal') {
                     itemDetails.quantity = item.querySelector('.mb-0:nth-child(2)').textContent;
 
-                    const totalPriceText = item.querySelector('strong:last-child').textContent.replace('₱', '').replace(',', '');
+                    const totalPriceText = item.querySelector('.mb-0:nth-child(4)').textContent.replace('Total Price: ₱', '');
                     const totalItemPrice = parseFloat(totalPriceText) || 0;
                     itemDetails.totalPrice = totalItemPrice;
                     totalAmount += totalItemPrice; // Add item total to overall total
@@ -915,7 +915,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     itemDetails.adults = item.querySelector('.mb-0:nth-child(2)').textContent;
                     itemDetails.kids = item.querySelector('.mb-0:nth-child(3)').textContent;
 
-                    const totalPriceText = item.querySelector('strong:last-child').textContent.replace('₱', '').replace(',', '');
+                    const totalPriceText = item.querySelector('.mb-0:nth-child(4)').textContent.replace('Total Price: ₱', '');
                     const totalItemPrice = parseFloat(totalPriceText) || 0;
                     itemDetails.totalPrice = totalItemPrice;
                     totalAmount += totalItemPrice; // Add item total to overall total
@@ -966,14 +966,23 @@ document.addEventListener('DOMContentLoaded', function () {
             summaryModal.innerHTML += summaryItem;
         });
 
-        // Update the total price in the footer
-        totalPriceElement.innerHTML = `<strong>Total Amount: ₱${totalAmount.toFixed(2)}</strong>`;
+       // Calculate 20% downpayment and balance
+    const downPayment = totalAmount * 0.20;
+    const balance = totalAmount - downPayment;
 
-        // Show the modal
-        const checkoutModal = new bootstrap.Modal(document.getElementById('summaryModal'));
-        checkoutModal.show();
+    // Update the total price, downpayment, and balance 
+    totalPriceElement.innerHTML = `
+        <strong>Total Amount: ₱${totalAmount.toFixed(2)}</strong><br>
+        <strong>20% Downpayment: ₱${downPayment.toFixed(2)}</strong><br>
+        <strong>Balance: ₱${balance.toFixed(2)}</strong>
+    `;
+
+    // Show the modal
+    const checkoutModal = new bootstrap.Modal(document.getElementById('summaryModal'));
+    checkoutModal.show();
     }
 });
+
 document.getElementById('confirmBookingBtn').addEventListener('click', function () {
     const contactNumber = document.getElementById('contactNumber').value;
     const totalAmount = document.getElementById('totalPriceSummary').innerText.replace('Total Amount: ₱', '');
