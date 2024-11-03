@@ -1,12 +1,12 @@
 <?php
-session_start();
+session_start(); 
 
 if (isset($_SESSION['user'])) {
     $user = $_SESSION['user'];
     
   
-    $username = $user['username']; 
-    $email = $user['email']; 
+    $username = $user['username'];
+    $email = $user['email'];
 
     die('User not found');
 }
@@ -26,7 +26,7 @@ $contactNumber = $conn->real_escape_string($input['contactNumber']);
 $totalAmount = $conn->real_escape_string($input['totalAmount']);
 
 // Insert into database
-$sql = "INSERT INTO booking (username, email, contact_number, total_amount) VALUES ('$username', '$email', '$contactNumber', '$totalAmount')";
+$sql = "INSERT INTO bookings (username, email, contact_number, total_price) VALUES ('$username', '$email', '$contactNumber', '$totalAmount')";
 
 if ($conn->query($sql) === TRUE) {
 

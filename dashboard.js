@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', function (event) {
             event.preventDefault();
             const productId = this.getAttribute('data-product-id');
-            const capacity = this.getAttribute('data-capacity'); // Get the room capacity
+            const capacity = this.getAttribute('data-capacity'); 
 
 
             const roomCapacityElement = document.getElementById('roomCapacity');
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 roomCapacityElement.textContent = `Room Capacity: ${capacity} persons`;
             }
 
-            // Fetch fully booked dates for the selected hotel
+            
             fetch(`get_fully_booked_dates.php?hotel_id=${productId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -72,15 +72,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => console.error('Error:', error));
 
-            // Store product ID for later use in the modal
+            
             document.getElementById('confirmDate').setAttribute('data-product-id', productId);
 
 
             storePriceData(this);
 
-            // Show the date picker modal
             const datePickerModal = new bootstrap.Modal(document.getElementById('datePickerModal'));
             datePickerModal.show();
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('confirmDate'));
+            modal.hide();
 
         });
     });
@@ -131,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const timeDiff = checkOutDate - checkInDate;
                 const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
                 numberOfNightsDisplay.textContent = nights > 0 ? nights : 0;
-                calculateTotalPrice(nights); // Update total price when nights change
+                calculateTotalPrice(nights); 
             } else {
                 numberOfNightsDisplay.textContent = 0;
             }
@@ -219,6 +221,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const productId = this.getAttribute('data-product-id');
         const checkInDate = document.getElementById('modalCheckInDate').value;
         const checkOutDate = document.getElementById('modalCheckOutDate').value;
+        // const totalPriceAdults = document.getElementById('totalPriceAdults').innerHTML.replace("Total Price (Adults): ₱", "");
+        // const totalPriceKids = document.getElementById('totalPriceKids').innerHTML.replace("Total Price (Kids): ₱", "");
+        // const totalValue = parseInt(totalPriceAdults) + parseInt(totalPriceKids);
+
+        // document.getElementById('totalBill').textContent = totalValue;
 
         if (!checkInDate || !checkOutDate) {
             alert('Please select both check-in and check-out dates.');
@@ -233,6 +240,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 offcanvasCart.show();
             })
             .catch(error => console.error('Error:', error));
+            const datePickerModal = bootstrap.Modal.getInstance(document.getElementById('datePickerModal'));
+                datePickerModal.hide();
+            
     });
 
     //Add items to the shopping cart
@@ -268,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (productElement) {
             const productName = productElement.getAttribute('data-product-name');
-            const productImage = productElement.getAttribute('data-product-image');
+            
             let priceAdult, priceKid;
 
             // Select the correct price based on the number of nights and convert to numbers
@@ -286,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Validate that the prices are valid numbers
+            
             if (isNaN(priceAdult) || isNaN(priceKid)) {
                 alert("Invalid price data for this product.");
                 return;
@@ -297,13 +307,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const totalPriceKids = priceKid * kidsCount
 
 
-            // Create a new cart item with product details and the preferred check-in/check-out dates
+           
             const newItem = document.createElement('li');
             newItem.classList.add('list-group-item');
             newItem.setAttribute('data-category', 'hotel');
             newItem.innerHTML = `
             <div class="d-flex align-items-center">
-                <img src="${productImage}" alt="${productName}" class="cart-item-image me-3">
+                
                 <div>
                     <p class="mb-0"><strong>${productName}</strong></p>
                     <p class="mb-0">Check-In Date: ${checkInDate}</p>
@@ -316,16 +326,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="mb-0">(Kid): ₱${priceKid.toFixed(2)}</p>
                     <p class="mb-0">Total (Adults): ₱${totalPriceAdults.toFixed(2)}</p>
                     <p class="mb-0">Total (Kids): ₱${totalPriceKids.toFixed(2)}</p>
-                     <p class="mb-0"><strong>Total Price: ₱${(totalPriceAdults + totalPriceKids).toFixed(2)}</strong></p>
+                    <p class="mb-0"><strong>Total Price: ₱${(totalPriceAdults + totalPriceKids).toFixed(2)}</strong></p>
+                    <div class="d-flex justify-content-end mt-2" style="align-items: flex-end;">
+                        <button class="btn btn-danger btn-sm remove-item" data-product-id="hotel-${productName}-${checkInDate}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
                 </div>
             </div>
         `;
             cartItems.appendChild(newItem);
-
+             
         }
     }
 
-    // Helper function to calculate the number of nights between two dates
+    
     function calculateNights(checkInDate, checkOutDate) {
         const checkIn = new Date(checkInDate);
         const checkOut = new Date(checkOutDate);
@@ -335,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    // Adjusting adults, kids, and rooms count
+    
     document.getElementById('plusAdults').addEventListener('click', function () {
         const adultsCount = document.getElementById('adultsCount');
         adultsCount.value = parseInt(adultsCount.value) + 1;
@@ -379,14 +392,14 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     // Event listener for showing the modal
     document.getElementById('addToCartModal').addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget; // Button that triggered the modal
+        var button = event.relatedTarget; 
 
         // Fetch ferry schedule, vessel type, and price data from the data attributes
         var ferrySchedule = button.getAttribute('data-ferry-schedule');
         var ferryVessel = button.getAttribute('data-ferry-vessel');
         var prices = JSON.parse(button.getAttribute('data-prices'));
 
-        // Select DOM elements for schedule, class, and price fields
+       
         var scheduleSelect = this.querySelector('#ferrySchedule');
         var classSelect = this.querySelector('#ferryClass');
         var adultPriceField = document.getElementById('adultPrice');
@@ -394,7 +407,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var kidPriceField = document.getElementById('kidPrice');
         var toddlerPriceField = document.getElementById('toddlerPrice');
 
-        // Populate the schedule select options
+        
         scheduleSelect.innerHTML = ''; // Clear previous options
         var scheduleArray = ferrySchedule.split(',');
         scheduleArray.forEach(function (schedule) {
@@ -404,100 +417,108 @@ document.addEventListener('DOMContentLoaded', function () {
             scheduleSelect.add(option);
         });
 
-        // Populate the class select options based on vessel type
-        classSelect.innerHTML = ''; // Clear previous options
-        if (ferryVessel === 'RORO') {
-            classSelect.add(new Option('Economy Class', 'economy'));
-            classSelect.add(new Option('VIP Class', 'vip'));
-        } else if (ferryVessel === 'Fast Craft') {
-            classSelect.add(new Option('Tourist Class', 'tourist'));
-            classSelect.add(new Option('Business Class', 'business'));
-        }
+       
+        classSelect.innerHTML = ''; 
 
-        // Trigger the change event to update the price fields initially
-        classSelect.dispatchEvent(new Event('change'));
+if (ferryVessel === 'RORO') {
+    classSelect.add(new Option('Economy Class', 'economy'));
+    classSelect.add(new Option('VIP Class', 'vip'));
+} else if (ferryVessel === 'Fast Craft') {
+    classSelect.add(new Option('Tourist Class', 'tourist'));
+    classSelect.add(new Option('Business Class', 'business'));
+}
 
-        // Update the prices when the class is selected
-        classSelect.addEventListener('change', function () {
-            var selectedClass = this.value;
 
-            // Update the price fields based on the selected class
-            if (prices[selectedClass]) {
-                adultPriceField.textContent = `₱${prices[selectedClass]['adult']}`;
-                seniorPriceField.textContent = `₱${prices[selectedClass]['senior']}`;
-                kidPriceField.textContent = `₱${prices[selectedClass]['kid']}`;
-                toddlerPriceField.textContent = `₱${prices[selectedClass]['toddler']}`;
-            } else {
-                // Default if no price available for the selected class
-                adultPriceField.textContent = '₱0.00';
-                seniorPriceField.textContent = '₱0.00';
-                kidPriceField.textContent = '₱0.00';
-                toddlerPriceField.textContent = '₱0.00';
-            }
-        });
+classSelect.selectedIndex = 0;
+const firstClass = classSelect.value; 
+
+if (prices[firstClass]) {
+    adultPriceField.textContent = `₱${prices[firstClass]['adult']}`;
+    seniorPriceField.textContent = `₱${prices[firstClass]['senior']}`;
+    kidPriceField.textContent = `₱${prices[firstClass]['kid']}`;
+    toddlerPriceField.textContent = `₱${prices[firstClass]['toddler']}`;
+}
+
+
+classSelect.addEventListener('change', function () {
+    const selectedClass = this.value;
+
+    if (prices[selectedClass]) {
+        adultPriceField.textContent = `₱${prices[selectedClass]['adult']}`;
+        seniorPriceField.textContent = `₱${prices[selectedClass]['senior']}`;
+        kidPriceField.textContent = `₱${prices[selectedClass]['kid']}`;
+        toddlerPriceField.textContent = `₱${prices[selectedClass]['toddler']}`;
+    }
+});
+
     });
 
     // Handle Add to Cart button click
-    document.getElementById('addToCartBtn').addEventListener('click', function () {
-        const ferryDate = document.getElementById('ferryDate').value;
-        const ferrySchedule = document.getElementById('ferrySchedule').value;
-        const ferryClass = document.getElementById('ferryClass').value;
-        const adultQty = parseInt(document.getElementById('adultQuantity').value);
-        const seniorQty = parseInt(document.getElementById('seniorQuantity').value);
-        const kidQty = parseInt(document.getElementById('kidQuantity').value);
-        const toddlerQty = parseInt(document.getElementById('toddlerQuantity').value);
+   document.getElementById('addToCartBtn').addEventListener('click', function () {
+    const ferryDate = document.getElementById('ferryDate').value;
+    const ferrySchedule = document.getElementById('ferrySchedule').value;
+    const ferryClass = document.getElementById('ferryClass').value;
+    const adultQty = parseInt(document.getElementById('adultQuantity').value) || 0;
+    const seniorQty = parseInt(document.getElementById('seniorQuantity').value) || 0;
+    const kidQty = parseInt(document.getElementById('kidQuantity').value) || 0;
+    const toddlerQty = parseInt(document.getElementById('toddlerQuantity').value) || 0;
 
+    // Prices
+    const adultPrice = parseFloat(document.getElementById('adultPrice').textContent.replace('₱', '')) || 0;
+    const seniorPrice = parseFloat(document.getElementById('seniorPrice').textContent.replace('₱', '')) || 0;
+    const kidPrice = parseFloat(document.getElementById('kidPrice').textContent.replace('₱', '')) || 0;
+    const toddlerPrice = parseFloat(document.getElementById('toddlerPrice').textContent.replace('₱', '')) || 0;
 
-        // Prices
-        const adultPrice = parseFloat(document.getElementById('adultPrice').textContent.replace('₱', ''));
-        const seniorPrice = parseFloat(document.getElementById('seniorPrice').textContent.replace('₱', ''));
-        const kidPrice = parseFloat(document.getElementById('kidPrice').textContent.replace('₱', ''));
-        const toddlerPrice = parseFloat(document.getElementById('toddlerPrice').textContent.replace('₱', ''));
+    if (ferryDate && ferrySchedule && ferryClass) {
+        // Calculate total prices
+        const totalAdultPrice = adultQty * adultPrice;
+        const totalSeniorPrice = seniorQty * seniorPrice;
+        const totalKidPrice = kidQty * kidPrice;
+        const totalToddlerPrice = toddlerQty * toddlerPrice;
+        const totalPrice = totalAdultPrice + totalSeniorPrice + totalKidPrice + totalToddlerPrice;
 
-        if (ferryDate && ferrySchedule && ferryClass && adultQty >= 0 && seniorQty >= 0 && kidQty >= 0 && toddlerQty >= 0) {
-            // Calculate total prices
-            const totalAdultPrice = adultQty * adultPrice;
-            const totalSeniorPrice = seniorQty * seniorPrice;
-            const totalKidPrice = kidQty * kidPrice;
-            const totalToddlerPrice = toddlerQty * toddlerPrice;
-            const totalPrice = totalAdultPrice + totalSeniorPrice + totalKidPrice + totalToddlerPrice;
-
-            // Add the item to the cart
-            const cartItems = document.getElementById('cartItems');
-            const newItem = document.createElement('li');
-            newItem.classList.add('list-group-item');
-            newItem.setAttribute('data-category', 'ferry');
-            newItem.innerHTML = `
-                <div class="d-flex align-items-center">
-                    <div>
-                        <p class="mb-0"><strong>${ferryClass} Class</strong></p>
-                        <p class="mb-0">Date: ${ferryDate}</p>
-                        <p class="mb-0">Schedule: ${ferrySchedule}</p>
-                        <p class="mb-0">Adults: ${adultQty} x ₱${adultPrice.toFixed(2)} = ₱${totalAdultPrice.toFixed(2)}</p>
-                        <p class="mb-0">Seniors: ${seniorQty} x ₱${seniorPrice.toFixed(2)} = ₱${totalSeniorPrice.toFixed(2)}</p>
-                        <p class="mb-0">Kids: ${kidQty} x ₱${kidPrice.toFixed(2)} = ₱${totalKidPrice.toFixed(2)}</p>
-                        <p class="mb-0">Toddlers: ${toddlerQty} x ₱${toddlerPrice.toFixed(2)} = ₱${totalToddlerPrice.toFixed(2)}</p>
-                        <p class="mb-0"><strong>Total Price: ₱${totalPrice.toFixed(2)}</strong></p>
+        // Add the item to the cart
+        const cartItems = document.getElementById('cartItems');
+        const newItem = document.createElement('li');
+        newItem.classList.add('list-group-item');
+        newItem.setAttribute('data-category', 'ferry');
+        newItem.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div>
+                    <p class="mb-0"><strong>${ferryClass} Class</strong></p>
+                    <p class="mb-0">Date: ${ferryDate}</p>
+                    <p class="mb-0">Schedule: ${ferrySchedule}</p>
+                    <p class="mb-0">Adults: ${adultQty} x ₱${adultPrice.toFixed(2)} = ₱${totalAdultPrice.toFixed(2)}</p>
+                    <p class="mb-0">Seniors: ${seniorQty} x ₱${seniorPrice.toFixed(2)} = ₱${totalSeniorPrice.toFixed(2)}</p>
+                    <p class="mb-0">Kids: ${kidQty} x ₱${kidPrice.toFixed(2)} = ₱${totalKidPrice.toFixed(2)}</p>
+                    <p class="mb-0">Toddlers: ${toddlerQty} x ₱${toddlerPrice.toFixed(2)} = ₱${totalToddlerPrice.toFixed(2)}</p>
+                    <p class="mb-0"><strong>Total Price: ₱${totalPrice.toFixed(2)}</strong></p>
+                    <div class="d-flex justify-content-end mt-2" style="align-items: flex-end;">
+                        <button class="btn btn-danger btn-sm remove-item" data-product-id="ferry-${ferryClass}-${ferryDate}"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>
-            `;
+            </div>
+        `;
 
-            // Append the new item to the cart
-            if (cartItems.innerHTML.includes('Your cart is empty')) {
-                cartItems.innerHTML = ''; // Clear empty cart message
-            }
-            cartItems.appendChild(newItem);
-
-
-            clearModalInputs();
-
-            // Close the modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addToCartModal'));
-            modal.hide();
-        } else {
-            alert('Please fill out all fields and ensure quantities are valid.');
+        // Append the new item to the cart
+        if (cartItems.innerHTML.includes('Your cart is empty')) {
+            cartItems.innerHTML = ''; // Clear empty cart message
         }
-    });
+        cartItems.appendChild(newItem);
+
+        // Clear inputs
+        clearModalInputs();
+
+        // Close the modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addToCartModal'));
+        modal.hide();
+
+    } else {
+        alert('Please fill out all fields and ensure quantities are valid.');
+    }
+    updateCartBadge();
+});
+
 
     // Function to clear modal inputs
     function clearModalInputs() {
@@ -584,6 +605,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="mb-0">Quantity: ${mealQuantity}</p>
                     <p class="mb-0">Price per Meal: ₱${mealPrice.toFixed(2)}</p>
                     <p class="mb-0"><strong>Total Price: ₱${totalMealPrice.toFixed(2)}</strong></p>
+                    <div class="d-flex justify-content-end mt-2" style="align-items: flex-end;">
+                        <button class="btn btn-danger btn-sm remove-item" data-product-id="meal-${mealName}-${mealQuantity}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
                 </div>
             </div>
         `;
@@ -594,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Close the modal after adding to the cart
         const mealModal = bootstrap.Modal.getInstance(document.getElementById('mealModal'));
         mealModal.hide();
+        updateCartBadge();
     });
 });
 
@@ -657,6 +682,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const modal = document.querySelector(`#addToCartModal${tourId}`);
             const modalInstance = bootstrap.Modal.getInstance(modal);
             modalInstance.hide();
+            updateCartBadge();
         });
     });
 
@@ -664,12 +690,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateCart(tourName, adultsCount, kidsCount, totalPriceAdults, totalPriceKids) {
         const cartItems = document.getElementById('cartItems');
 
-        // Check if cart is empty and remove the empty message
+        
         if (cartItems.innerHTML.includes('Your cart is empty')) {
-            cartItems.innerHTML = ''; // Clear empty cart message
+            cartItems.innerHTML = ''; 
         }
 
-        // Create a new cart item element
+        
         const newItem = document.createElement('li');
         newItem.classList.add('list-group-item');
         newItem.setAttribute('data-category', 'tour');
@@ -680,11 +706,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="mb-0">Adults: ${adultsCount} x ₱${totalPriceAdults}</p>
                     <p class="mb-0">Kids: ${kidsCount} x ₱${totalPriceKids}</p>
                     <p class="mb-0"><strong>Total Price: ₱${(parseFloat(totalPriceAdults) + parseFloat(totalPriceKids)).toFixed(2)}</strong></p>
+                    <div class="d-flex justify-content-end mt-2" style="align-items: flex-end;">
+                        <button class="btn btn-danger btn-sm remove-item" data-product-id="tour-${tourName}-${adultsCount}-${kidsCount}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
                 </div>
             </div>
         `;
 
-        // Append the new item to the cart
+        
         cartItems.appendChild(newItem);
     }
 });
@@ -702,7 +731,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to update cart items based on the category
     function updateCartItems(category, productId) {
         const cartItems = document.getElementById('cartItems');
-        let totalItemPrice = 0; // To track the total price of each item
+        let totalItemPrice = 0; 
 
         if (category === 'hotel') {
             const productElement = document.querySelector(`.add-to-cart[data-product-id="${productId}"]`);
@@ -732,7 +761,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const totalPriceAdults = priceAdult * adultsCount;
             const totalPriceKids = priceKid * kidsCount;
-            totalItemPrice = totalPriceAdults + totalPriceKids; // Calculate the total for this hotel item
+            totalItemPrice = totalPriceAdults + totalPriceKids; 
 
             const newItem = `
                 <li class="list-group-item">
@@ -749,6 +778,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <p>Total Price (Adults): ₱${totalPriceAdults.toFixed(2)}</p>
                             <p>Total Price (Kids): ₱${totalPriceKids.toFixed(2)}</p>
                             <p><strong>Total: ₱${totalItemPrice.toFixed(2)}</strong></p>
+                            
                         </div>
                     </div>
                 </li>
@@ -841,10 +871,12 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
             cartItems.innerHTML += newItem;
             updateTotalBill(totalItemPrice);
+
+             updateCartBadge();
         }
     }
 
-    // Attach event listeners for different categories
+    
     document.getElementById('addToCartBtn').addEventListener('click', function () {
         updateCartItems('hotel', this.getAttribute('data-product-id'));
     });
@@ -853,7 +885,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateCartItems('meal', this.getAttribute('data-meal-id'));
     });
 
-    // For ferry and tour, attach similar event listeners
+    
     document.getElementById('confirmFerryAddToCart').addEventListener('click', function () {
         updateCartItems('ferry', this.getAttribute('data-ferry-id'));
     });
@@ -864,6 +896,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+
 document.addEventListener('DOMContentLoaded', function () {
     const proceedToCheckoutButton = document.getElementById('proceedToCheckout');
 
@@ -871,7 +904,7 @@ document.addEventListener('DOMContentLoaded', function () {
         proceedToCheckoutButton.addEventListener('click', function () {
             const cartItems = document.querySelectorAll('#cartItems .list-group-item');
             let cartSummary = [];
-            let totalAmount = 0; // Initialize the total order amount to accumulate prices
+            let totalAmount = 0; 
 
             cartItems.forEach(function (item) {
                 let itemDetails = {};
@@ -929,7 +962,6 @@ document.addEventListener('DOMContentLoaded', function () {
             displayCartSummary(cartSummary, totalAmount);
         });
     }
-
     function displayCartSummary(cartSummary, totalAmount) {
         const summaryModal = document.getElementById('summaryModalContent');
         const totalPriceElement = document.getElementById('totalPriceSummary');
@@ -966,7 +998,7 @@ document.addEventListener('DOMContentLoaded', function () {
             summaryModal.innerHTML += summaryItem;
         });
 
-       // Calculate 20% downpayment and balance
+         // Calculate 20% downpayment and balance
     const downPayment = totalAmount * 0.20;
     const balance = totalAmount - downPayment;
 
@@ -977,9 +1009,10 @@ document.addEventListener('DOMContentLoaded', function () {
         <strong>Balance: ₱${balance.toFixed(2)}</strong>
     `;
 
-    // Show the modal
-    const checkoutModal = new bootstrap.Modal(document.getElementById('summaryModal'));
-    checkoutModal.show();
+
+        // Show the modal
+        const checkoutModal = new bootstrap.Modal(document.getElementById('summaryModal'));
+        checkoutModal.show();
     }
 });
 
@@ -987,10 +1020,13 @@ document.getElementById('confirmBookingBtn').addEventListener('click', function 
     const contactNumber = document.getElementById('contactNumber').value;
     const totalAmount = document.getElementById('totalPriceSummary').innerText.replace('Total Amount: ₱', '');
 
-    // Prepare the data to send
+     const username = document.getElementById('hiddenUsername').value;
+    const email = document.getElementById('hiddenEmail').value;
+
+    
     const bookingData = {
-        username: "<?php echo htmlspecialchars($user['username']); ?>",
-        email: "<?php echo htmlspecialchars($user['email']); ?>",
+        username: username,
+        email: email,
         contactNumber: contactNumber,
         totalAmount: totalAmount,
 
@@ -1007,11 +1043,11 @@ document.getElementById('confirmBookingBtn').addEventListener('click', function 
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Booking confirmed!');
-                // Optionally close the modal
+                alert('Booking confirmed! You may now view your booking details at My Bookings section. Please refresh the page.');
+                
                 $('#summaryModal').modal('hide');
             } else {
-                // Handle error case
+                
                 alert('Error confirming booking: ' + data.message);
             }
         })
@@ -1019,3 +1055,139 @@ document.getElementById('confirmBookingBtn').addEventListener('click', function 
             console.error('Error:', error);
         });
 });
+
+
+
+function printBooking() {
+    var logoPath = 'images/mattlogo.jpg'; 
+    var printContents = document.querySelector('#bookingsModal .modal-body').innerHTML;
+    
+   
+    var printableHTML = `
+    <html>
+        <head>
+            <title>Booking Confirmation</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    line-height: 1.6;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 40px;
+                }
+                .header img {
+                    width: 150px;
+                    margin-bottom: 20px;
+                }
+                .content {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    border: 1px solid #ddd;
+                    padding: 20px;
+                    border-radius: 8px;
+                }
+                .content h2 {
+                    text-align: center;
+                    margin-bottom: 20px;
+                    font-size: 24px;
+                }
+                .content ul {
+                    list-style-type: none;
+                    padding: 0;
+                }
+                .content ul li {
+                    padding: 10px;
+                    border-bottom: 1px solid #ddd;
+                }
+                .content ul li:last-child {
+                    border-bottom: none;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <img src="` + logoPath + `" alt="MattNT Logo">
+                <h1>Booking Confirmation</h1>
+            </div>
+            <div class="content">
+                <h2>Your Booking Details</h2>
+                ` + printContents + `
+            </div>
+        </body>
+    </html>
+    `;
+    
+    var originalContents = document.body.innerHTML;
+    
+    
+    var printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write(printableHTML);
+    printWindow.document.close(); 
+    printWindow.focus(); 
+    printWindow.print(); 
+    printWindow.close(); 
+}
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('remove-item')) {
+        const productId = event.target.getAttribute('data-product-id');
+        removeCartItem(productId, event.target);
+    }
+
+    updateCartBadge();
+});
+
+function removeCartItem(productId, removeButton) {
+    const cartItem = removeButton.closest('li'); 
+    const itemPrice = parseFloat(cartItem.querySelector('p strong').textContent.replace('₱', '')) || 0; 
+    cartItem.remove(); 
+
+    updateTotalBill(-itemPrice);
+
+
+    if (document.getElementById('cartItems').children.length === 0) {
+        document.getElementById('cartItems').innerHTML = '<li>Your cart is empty</li>';
+    }
+    updateCartBadge();
+}
+// Function to update the cart badge
+function updateCartBadge() {
+    const cartItems = document.getElementById('cartItems').children;
+    const cartBadge = document.getElementById('cartBadge');
+    const itemCount = cartItems.length; 
+
+    cartBadge.textContent = itemCount;
+
+   
+    if (itemCount === 0) {
+        cartBadge.style.display = 'none';
+    } else {
+        cartBadge.style.display = 'inline-block';
+    }
+}
+
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const creditCardRadio = document.getElementById('creditCard');
+        const gcashRadio = document.getElementById('gcash');
+        const creditCardFields = document.getElementById('creditCardFields');
+        const gcashFields = document.getElementById('gcashFields');
+
+      
+        creditCardRadio.addEventListener('change', function () {
+            if (this.checked) {
+                creditCardFields.style.display = 'block';
+                gcashFields.style.display = 'none';
+            }
+        });
+
+        gcashRadio.addEventListener('change', function () {
+            if (this.checked) {
+                creditCardFields.style.display = 'none';
+                gcashFields.style.display = 'block';
+            }
+        });
+    });

@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($stmt->execute()) {
             
             if (move_uploaded_file($image_tmp, $image_path)) {
-                header("Location: manage_meals.php?success=1");  
+                header("Location: admin_dashboard.php?success=1");  
             } else {
                 echo "Error uploading image.";
             }

@@ -1,25 +1,40 @@
 <?php
-include 'db_connection.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $product_id = $_POST['product_id'];   
-    $category = $_POST['category'];    
-    $fully_booked_dates = $_POST['fully_booked_dates']; 
-    $datesArray = explode(',', $fully_booked_dates);
+include 'db_connection.php'; 
 
 
-    $sql = "INSERT INTO fully_booked_dates (product_id, category, booked_date) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  
+    $hotel_id = $_POST['hotel_id'];
+    $booked_dates = $_POST['booked_dates'];
 
-    foreach ($datesArray as $date) {
-        $date = trim($date); 
-        $stmt->bind_param('iss', $product_id, $category, $date);
-        $stmt->execute();
+
+    $response = ['success' => true, 'message' => 'Dates saved successfully'];
+
+  
+    $stmt = $conn->prepare("INSERT INTO fully_booked_dates (hotel_id, fully_booked_date) VALUES (?, ?)");
+    if (!$stmt) {
+        $response['success'] = false;
+        $response['message'] = 'Database error: ' . $conn->error;
+    } else {
+        
+        $stmt->bind_param("is", $hotel_id, $date);
+
+        foreach ($booked_dates as $date) {
+            $date = mysqli_real_escape_string($conn, $date); 
+            if (!$stmt->execute()) {
+                $response['success'] = false;
+                $response['message'] = 'Error: ' . $stmt->error; 
+                break; 
+            }
+        }
+        $stmt->close();
     }
 
-    header("Location: admin_dashboard.php?section=$category");
-    exit();
+   
+    echo json_encode($response);
 }
 
-$conn->close();
+// Close the database connection
+mysqli_close($conn);
 ?>

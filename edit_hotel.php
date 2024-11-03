@@ -1,66 +1,140 @@
+<?php
+session_start();
 
-<?
-$(function() {
-    $('#edit_fully_booked_dates').datepicker({
-        dateFormat: 'yy-mm-dd',
-        beforeShowDay: function(date) {
-            const string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-            return [!$('#edit_fully_booked_dates').val().split(',').includes(string)];
-        },
-        onSelect: function(dateText) {
-            let currentDates = $('#edit_fully_booked_dates').val().split(',');
-            if (!currentDates.includes(dateText)) {
-                currentDates.push(dateText);
+if (!isset($_SESSION['username'])) {
+    header("Location: index.php");
+    exit();
+}
+
+include 'db_connection.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form inputs
+    $hotel_id = $_POST['id'];
+    $name = $_POST['hotel_name'];
+    $price_2d1n_adult = $_POST['price_2d1n_adult'];
+    $price_2d1n_kid = $_POST['price_2d1n_kid'];
+    $price_3d2n_adult = $_POST['price_3d2n_adult'];
+    $price_3d2n_kid = $_POST['price_3d2n_kid'];
+    $price_4d3n_adult = $_POST['price_4d3n_adult'];
+    $price_4d3n_kid = $_POST['price_4d3n_kid'];
+    $capacity = $_POST['capacity'];
+    $inclusions = $_POST['inclusions'];
+    $exclusions = $_POST['exclusions'];
+    $policy = $_POST['policy'];
+    $description = $_POST['description'];
+    $features = isset($_POST['features']) ? implode(', ', $_POST['features']) : '';
+
+    // Handle check-in and check-out time to be in AM/PM format
+    $check_in = $_POST['check_in'];
+    $check_out = $_POST['check_out'];
+
+    // Convert check-in and check-out times to AM/PM format
+    $check_in_time = DateTime::createFromFormat('H:i', $check_in)->format('h:i A');
+    $check_out_time = DateTime::createFromFormat('H:i', $check_out)->format('h:i A');
+
+    // Handle Thumbnail Upload
+    if (isset($_FILES['thumbnail_image']) && $_FILES['thumbnail_image']['error'] === 0) {
+        $thumbnail = $_FILES['thumbnail_image'];
+        $thumbnailName = time() . '_thumbnail_' . $thumbnail['name'];
+        if (move_uploaded_file($thumbnail['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/matttnt/images/' . $thumbnailName)) {
+            $thumbnailPath = 'images/' . $thumbnailName;
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Failed to upload the thumbnail image.']);
+            exit();
+        }
+    } else {
+        $thumbnailPath = null;
+    }
+
+    $galleryPaths = [];
+
+    // Handle Gallery Images Upload
+    if (isset($_FILES['gallery_images'])) {
+        foreach ($_FILES['gallery_images']['tmp_name'] as $key => $tmpName) {
+            if ($_FILES['gallery_images']['error'][$key] === 0) {
+                $galleryName = time() . '_' . $key . '_' . $_FILES['gallery_images']['name'][$key];
+                $targetPath = $_SERVER['DOCUMENT_ROOT'] . '/matttnt/images/' . $galleryName;
+
+                if (move_uploaded_file($tmpName, $targetPath)) {
+                    $galleryPaths[] = 'images/' . $galleryName;
+                } else {
+                    echo json_encode(['success' => false, 'error' => "Failed to upload gallery image: " . $_FILES['gallery_images']['name'][$key]]);
+                    exit();
+                }
             } else {
-                currentDates = currentDates.filter(date => date !== dateText); 
+                echo json_encode(['success' => false, 'error' => "Error with file upload for gallery image: " . $_FILES['gallery_images']['name'][$key] . " - Error code: " . $_FILES['gallery_images']['error'][$key]]);
+                exit();
             }
-            $('#edit_fully_booked_dates').val(currentDates.join(',')); 
+        }
+    }
+
+    $galleryImagesString = implode(',', $galleryPaths);
+
+    // Update hotel information
+    $sql = "UPDATE hotels SET 
+                name=?, 
+                check_in=?, 
+                check_out=?, 
+                features=?, 
+                capacity=?, 
+                description=?, 
+                inclusions=?, 
+                exclusions=?, 
+                policy=?, 
+                price_2d1n_adult=?, 
+                price_2d1n_kid=?, 
+                price_3d2n_adult=?, 
+                price_3d2n_kid=?, 
+                price_4d3n_adult=?, 
+                price_4d3n_kid=?, 
+                thumbnail_image=?, 
+                gallery_images=? 
+            WHERE id=?";
+
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        die('Prepare failed: ' . htmlspecialchars($conn->error));
+    }
+
+    $stmt->bind_param(
+        "ssssssssddddssssi",
+        $name,
+        $check_in_time,
+        $check_out_time,
+        $features,
+        $capacity,
+        $description,
+        $inclusions,
+        $exclusions,
+        $policy,
+        $price_2d1n_adult,
+        $price_2d1n_kid,
+        $price_3d2n_adult,
+        $price_3d2n_kid,
+        $price_4d3n_adult,
+        $price_4d3n_kid,
+        $thumbnailPath,
+        $galleryImagesString,
+        $hotel_id
+    );
+
+    if ($stmt->execute()) {
+        // Handle fully booked dates
+        $conn->query("DELETE FROM fully_booked_dates WHERE hotel_id = $hotel_id");
+
+        $selectedDates = isset($_POST['fully_booked_dates']) ? explode(',', $_POST['fully_booked_dates']) : [];
+        foreach ($selectedDates as $date) {
+            $date = $conn->real_escape_string($date);
+            $conn->query("INSERT INTO fully_booked_dates (hotel_id, fully_booked_date) VALUES ($hotel_id, '$date')");
         }
 
-    window.openEditModal = function(hotel) {
-        $('#edit_hotel_id').val(hotel.id);
-        $('#edit_hotel_name').val(hotel.name);
-        $('#edit_price_adult').val(hotel.price_adult);
-        $('#edit_price_kid').val(hotel.price_kid);
-        $('#edit_check_in').val(hotel.check_in);
-        $('#edit_check_out').val(hotel.check_out);
-        $('#edit_capacity').val(hotel.capacity);
-        $('#edit_description').val(hotel.description);
-        $('#edit_image_url').val(hotel.image_url);
-        $('#edit_inclusions').val(hotel.inclusions);
-        $('#edit_exclusions').val(hotel.exclusions);
-        $('#edit_policy').val(hotel.policy);
-        $('#edit_fully_booked_dates').val(hotel.fully_booked_dates);
+        echo json_encode(['success' => true]);
+        exit();
+    } else {
+        echo json_encode(['success' => false, 'error' => $stmt->error]);
+    }
 
-
-        $('#edit_feature_wifi').prop('checked', hotel.features.includes('Free Wifi'));
-        $('#edit_feature_breakfast').prop('checked', hotel.features.includes('Free Breakfast'));
-        $('#edit_feature_pool').prop('checked', hotel.features.includes('Swimming Pool'));
-        $('#edit_feature_pet').prop('checked', hotel.features.includes('Pet Friendly'));
-        $('#edit_feature_non_beachfront').prop('checked', hotel.features.includes('Non Beachfront'));
-        $('#edit_feature_beachfront').prop('checked', hotel.features.includes('Beachfront'));
-        $('#edit_feature_kitchen').prop('checked', hotel.features.includes('With Kitchen'));
-        $('#edit_feature_grilling_area').prop('checked', hotel.features.includes('With Grilling Area'));
-        $('#edit_feature_non_smoking').prop('checked', hotel.features.includes('Non Smoking'));
-        $('#edit_feature_double_bed').prop('checked', hotel.features.includes('Double Sized Bed'));
-
-
-        var editHotelModal = new bootstrap.Modal(document.getElementById('editHotelModal'));
-        editHotelModal.show();
-    };
-
-
-    $('#editHotelForm').submit(function(e) {
-        e.preventDefault(); 
-
-        var formData = $(this).serialize(); 
-        $.post('edit_hotel_handler.php', formData, function(response) {
-            if (response.success) {
-                location.reload(); 
-            } else {
-                alert('Error updating hotel: ' + response.error);
-            }
-        }, 'json');
-    });
-
+    $stmt->close();
+}
 ?>

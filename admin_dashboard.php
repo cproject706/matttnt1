@@ -7,7 +7,49 @@
         exit();
     }
 
-    include 'db_connection.php';
+
+
+include 'db_connection.php';
+
+
+if (isset($_POST['update_status']) && isset($_POST['booking_id']) && isset($_POST['status'])) {
+    $booking_id = $_POST['booking_id'];
+    $status = $_POST['status'];
+
+    $update_sql = "UPDATE bookings SET status = ? WHERE id = ?";
+    $stmt = $conn->prepare($update_sql);
+    $stmt->bind_param('si', $status, $booking_id);
+    $stmt->execute();
+
+    $fetch_booking_sql = "SELECT total_price, booking_date FROM bookings WHERE id = ?";
+    $stmt = $conn->prepare($fetch_booking_sql);
+    $stmt->bind_param('i', $booking_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $booking = $result->fetch_assoc();
+
+    
+    $payment_method = 'GCash';
+
+
+    $check_sales_sql = "SELECT * FROM sales WHERE booking_id = ?";
+    $stmt = $conn->prepare($check_sales_sql);
+    $stmt->bind_param('i', $booking_id);
+    $stmt->execute();
+    $sales_result = $stmt->get_result();
+
+    if ($sales_result->num_rows == 0) {
+
+        $insert_sale_sql = "INSERT INTO sales (booking_id, total_price, sales_date, payment_method) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($insert_sale_sql);
+        $stmt->bind_param('idss', $booking_id, $booking['total_price'], $booking['booking_date'], $payment_method);
+        $stmt->execute();
+    }
+
+    header("Location: admin_dashboard.php?section=bookings");
+    exit();
+}
+
 
     // Deleting Products
     if (isset($_GET['delete']) && isset($_GET['category'])) {
@@ -26,6 +68,9 @@
                 break;
             case 'tours':
                 $delete_sql = "DELETE FROM tours WHERE id = ?";
+                break;
+            case 'bookings':
+                $delete_sql = "DELETE FROM bookings WHERE id = ?"; 
                 break;
             default:
                 exit("Invalid category");
@@ -50,6 +95,16 @@
     $sql_count_tours = "SELECT COUNT(*) AS count FROM tours";
     $count_tours = $conn->query($sql_count_tours)->fetch_assoc()['count'];
 
+    $sql_count_bookings = "SELECT COUNT(*) AS count FROM bookings";
+    $count_bookings = $conn->query($sql_count_bookings)->fetch_assoc()['count'];
+
+    // Calculate total bookings
+    $sql_total_bookings = "SELECT COUNT(*) AS total_bookings FROM bookings";
+    $total_bookings = $conn->query($sql_total_bookings)->fetch_assoc()['total_bookings'];
+
+    // Calculate total sales
+    $sql_total_sales = "SELECT SUM(total_price) AS total_sales FROM sales";
+    $total_sales = $conn->query($sql_total_sales)->fetch_assoc()['total_sales'];
     
     $sql_hotels = "SELECT * FROM hotels";
     $hotels = $conn->query($sql_hotels);
@@ -62,6 +117,13 @@
 
     $sql_tours = "SELECT * FROM tours";
     $tours = $conn->query($sql_tours);
+
+    $sql_bookings = "SELECT * FROM bookings"; 
+    $bookings = $conn->query($sql_bookings);
+
+    $sql_sales = "SELECT * FROM sales";
+    $sales = $conn->query($sql_sales);
+
     ?>
 
     <!DOCTYPE html>
@@ -74,6 +136,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
 
         <style>
             /* Google Fonts */
@@ -248,6 +312,8 @@ thead th {
         <a href="javascript:void(0)" onclick="toggleSection('manageMealsSection')"><i class="fas fa-utensils"></i> Manage Meals</a>
         <a href="javascript:void(0)" onclick="toggleSection('manageFerriesSection')"><i class="fas fa-ship"></i> Manage Ferry Tickets</a>
         <a href="javascript:void(0)" onclick="toggleSection('manageToursSection')"><i class="fas fa-map"></i> Manage Tours</a>
+        <a href="javascript:void(0)" onclick="toggleSection('salesReportSection')"><i class="fas fa-chart-line"></i> Sales Report</a>
+
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
 
@@ -257,6 +323,27 @@ thead th {
             <!-- Dashboard Section -->
             <div id="dashboardSection">
                 <h3>Dashboard</h3>
+                <div class="row mb-3">
+    <div class="col-md-6">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Total Bookings</div>
+            <div class="card-body">
+                <h5 class="card-title"><?php echo $total_bookings; ?></h5>
+                <p class="card-text">Total number of bookings.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-header">Total Sales</div>
+            <div class="card-body">
+                <h5 class="card-title">₱<?php echo number_format($total_sales, 2); ?></h5>
+                <p class="card-text">Total sales from all bookings.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
                 <div class="row">
                     <div class="col-md-3">
                         <div class="card text-white bg-primary mb-3">
@@ -300,18 +387,118 @@ thead th {
                     </div>
                 </div>
             </div>
-        <!-- Manage Bookings Section -->
-        <div id="manageBookingsSection" class="hidden">
-            <h3>Bookings</h3>
-            <p>No bookings available.</p>
-        </div>
+<!-- Booking Section -->
+<div id="manageBookingsSection">
+    <h3>Manage Bookings</h3>
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 5%;">ID</th>
+                    <th style="width: 15%;">Username</th>
+                    <th style="width: 20%;">Email</th>
+                    <th style="width: 15%;">Contact Number</th>
+                    <th style="width: 10%;">Total Price</th>
+                    <th style="width: 15%;">Booking Date</th>
+                    <th style="width: 10%;">Current Status</th>
+                    <th style="width: 10%;">Set Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($bookings->num_rows > 0) {
+                    while ($booking = $bookings->fetch_assoc()) {
+                        switch ($booking['status']) {
+                            case 'Checked-in':
+                                $status_class = 'badge bg-success';
+                                break;
+                            case 'Checked-out':
+                                $status_class = 'badge bg-secondary';
+                                break;
+                            case 'Rebooked':
+                                $status_class = 'badge bg-warning text-dark';
+                                break;
+                            case 'Cancelled':
+                                $status_class = 'badge bg-danger';
+                                break;
+                            default:
+                                $status_class = 'badge bg-light text-dark';
+                        }
+                ?>
+                <tr>
+                    <td><?php echo $booking['id']; ?></td>
+                    <td class="text-truncate"><?php echo htmlspecialchars($booking['username']); ?></td>
+                    <td class="text-truncate"><?php echo htmlspecialchars($booking['email']); ?></td>
+                    <td><?php echo htmlspecialchars($booking['contact_number']); ?></td>
+                    <td>₱<?php echo number_format($booking['total_price'], 2); ?></td>
+                    <td><?php echo htmlspecialchars($booking['booking_date']); ?></td>
+                    
+                    <!-- Display the current status with a badge -->
+                    <td>
+                        <span class="<?php echo $status_class; ?>">
+                            <?php echo htmlspecialchars($booking['status']); ?>
+                        </span>
+                    </td>
+                    
+                    <!-- Set Status modal trigger -->
+                    <td>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#setStatusModal<?php echo $booking['id']; ?>">
+                            Set
+                        </button>
 
-       
+                        <!-- Modal -->
+                        <div class="modal fade" id="setStatusModal<?php echo $booking['id']; ?>" tabindex="-1" aria-labelledby="setStatusModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="setStatusModalLabel">Set Status for Booking ID: <?php echo $booking['id']; ?></h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="POST" action="admin_dashboard.php?section=bookings">
+                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                            <div class="mb-3">
+                                                <label for="statusSelect<?php echo $booking['id']; ?>" class="form-label">Select Status</label>
+                                                <select name="status" id="statusSelect<?php echo $booking['id']; ?>" class="form-select">
+                                                    <option value="Checked-in" <?php echo $booking['status'] == 'Checked-in' ? 'selected' : ''; ?>>Checked-in</option>
+                                                    <option value="Checked-out" <?php echo $booking['status'] == 'Checked-out' ? 'selected' : ''; ?>>Checked-out</option>
+                                                    <option value="Rebooked" <?php echo $booking['status'] == 'Rebooked' ? 'selected' : ''; ?>>Rebooked</option>
+                                                    <option value="Cancelled" <?php echo $booking['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                                </select>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary" name="update_status">Update Status</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+                <?php
+                    }
+                } else {
+                ?>
+                <tr>
+                    <td colspan="8" class="text-center">No bookings available.</td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
 <!-- Manage Hotels Section -->
 <div id="manageHotelsSection" class="hidden">
+    
     <h3>Manage Hotels</h3>
     <button class="btn btn-primary mb-3" id="openHotelModal">Add New Hotel</button>
     <div class="table-responsive mt-3">
+        
         <table class="table table-striped table-bordered table-hover">
             <thead class="table-light">
                 <tr>
@@ -326,14 +513,10 @@ thead th {
                     <th style="width: 10%;" class="text-truncate">Exclusions</th>
                     <th style="width: 10%;" class="text-truncate">Policy</th>
                     <th style="width: 10%;" class="text-truncate">Fully Booked Dates</th>
-                    <th style="width: 10%;" class="text-truncate">Thumbnail</th>
-                    <th style="width: 10%;">Gallery</th>
                     <th colspan="6" class="text-center">Pricing</th>
                     <th style="width: 10%;">Actions</th>
                 </tr>
                 <tr>
-                    <th></th>
-                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
@@ -354,79 +537,68 @@ thead th {
                 </tr>
             </thead>
             <tbody>
-    <?php if ($hotels->num_rows > 0) { ?>
-        <?php while ($hotel = $hotels->fetch_assoc()) { 
-            $gallery_images = explode(',', $hotel['gallery_images']);
-            $thumbnail = !empty($gallery_images[0]) ? 'matttnt/images/' . trim($gallery_images[0]) : 'matttnt/images/no-image.jpg';
-        ?>
-        <tr>
-            <td><?php echo $hotel['id']; ?></td>
-            <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['name']); ?></td>
-            <td><?php echo htmlspecialchars($hotel['check_in']); ?></td>
-            <td><?php echo htmlspecialchars($hotel['check_out']); ?></td>
-            <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['features']); ?></td>
-            <td><?php echo htmlspecialchars($hotel['capacity']); ?></td>
-            <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['description']); ?></td>
-            <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['inclusions']); ?></td>
-            <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['exclusions']); ?></td>
-            <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['policy']); ?></td>
-            <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['fully_booked_dates']); ?></td>
-            <td class="text-truncate" style="max-width: 150px;">
-                <img src="matttnt/images/<?php echo htmlspecialchars($hotel['image_urls']); ?>" width="100" height="60" alt="Hotel Image for <?php echo htmlspecialchars($hotel['name']); ?>">
-            </td>
-            <td>
-                <img src="<?php echo htmlspecialchars($thumbnail); ?>" width="100" height="60" alt="Gallery Thumbnail"> 
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#galleryModal<?php echo $hotel['id']; ?>">View Gallery</button>
-            </td>
-            <td>₱<?php echo number_format($hotel['price_2d1n_adult'], 2); ?></td>
-<td>₱<?php echo number_format($hotel['price_2d1n_kid'], 2); ?></td>
-<td>₱<?php echo number_format($hotel['price_3d2n_adult'], 2); ?></td>
-<td>₱<?php echo number_format($hotel['price_3d2n_kid'], 2); ?></td>
-<td>₱<?php echo number_format($hotel['price_4d3n_adult'], 2); ?></td>
-<td>₱<?php echo number_format($hotel['price_4d3n_kid'], 2); ?></td>
+            <?php if ($hotels->num_rows > 0) { ?>
+                <?php while ($hotel = $hotels->fetch_assoc()) { 
+                    $gallery_images = explode(',', $hotel['gallery_images']);
+                    $thumbnail = !empty($gallery_images[0]) ? 'matttnt/images/' . trim($gallery_images[0]) : 'matttnt/images/no-image.jpg';
+                ?>
+                <tr>
+                    <td><?php echo $hotel['id']; ?></td>
+                    <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['name']); ?></td>
+                    <td><?php echo htmlspecialchars($hotel['check_in']); ?></td>
+                    <td><?php echo htmlspecialchars($hotel['check_out']); ?></td>
+                    <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['features']); ?></td>
+                    <td><?php echo htmlspecialchars($hotel['capacity']); ?></td>
+                    <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['description']); ?></td>
+                    <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['inclusions']); ?></td>
+                    <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['exclusions']); ?></td>
+                    <td class="text-truncate" style="max-width: 150px;"><?php echo htmlspecialchars($hotel['policy']); ?></td>
+                    <td class="text-truncate" style="max-width: 150px;">
+                        <?php echo htmlspecialchars($hotel['fully_booked_dates']); ?>
+                        <button class="btn btn-info btn-sm" onclick="openDateModal(<?php echo $hotel['id']; ?>)">Add Dates</button>
+                    </td>
+                    
+                    <td>₱<?php echo number_format($hotel['price_2d1n_adult'], 2); ?></td>
+                    <td>₱<?php echo number_format($hotel['price_2d1n_kid'], 2); ?></td>
+                    <td>₱<?php echo number_format($hotel['price_3d2n_adult'], 2); ?></td>
+                    <td>₱<?php echo number_format($hotel['price_3d2n_kid'], 2); ?></td>
+                    <td>₱<?php echo number_format($hotel['price_4d3n_adult'], 2); ?></td>
+                    <td>₱<?php echo number_format($hotel['price_4d3n_kid'], 2); ?></td>
 
-            <td>
-                <button class="btn btn-warning btn-sm" onclick="openEditModal(<?php echo htmlspecialchars(json_encode($hotel)); ?>)">Edit</button>
-                <a href="admin_dashboard.php?delete=<?php echo $hotel['id']; ?>&category=hotels" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this hotel?');">Delete</a>
-            </td>
+                    <td>
+                         
+
+                        <a href="#" class="btn btn-danger btn-sm" onclick="showDeleteModal('admin_dashboard.php?delete=<?php echo $hotel['id']; ?>&category=hotels')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
         </tr>
-
-        <!-- Modal for the hotel gallery -->
-        <div class="modal fade" id="galleryModal<?php echo $hotel['id']; ?>" tabindex="-1" aria-labelledby="galleryModalLabel<?php echo $hotel['id']; ?>" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="galleryModalLabel<?php echo $hotel['id']; ?>"><?php echo htmlspecialchars($hotel['name']); ?> - Gallery</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="carousel<?php echo $hotel['id']; ?>" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <?php foreach ($gallery_images as $index => $image) {
-                                    $image = trim($image);
-                                    $image_path = 'matttnt/images/' . $image; 
-                                    $active_class = $index === 0 ? 'active' : ''; ?>
-                                    <div class="carousel-item <?php echo $active_class; ?>">
-                                        <img src="<?php echo htmlspecialchars($image_path); ?>" class="d-block w-100" alt="Hotel Gallery Image <?php echo ($index + 1); ?>">
-                                    </div>
-                                <?php } ?>
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel<?php echo $hotel['id']; ?>" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#carousel<?php echo $hotel['id']; ?>" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
+        <!-- Modal for Adding Fully Booked Dates -->
+<div class="modal fade" id="dateModal" tabindex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dateModalLabel">Add Fully Booked Dates</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="hotelId">
+                <div class="mb-3">
+                    <label for="bookedDates" class="form-label">Select Dates</label>
+                    <input type="date" class="form-control" id="bookedDates">
                 </div>
+                <div id="dateList"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addBookedDate()">Add Date</button>
+                 <button type="button" class="btn btn-primary" onclick="saveBookedDates()">Save Dates</button>
+            </div>
+
             </div>
         </div>
+    </div>
+</div>
 
         <?php } ?>
     <?php } else { ?>
@@ -439,6 +611,29 @@ thead th {
         </table>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-center">
+      <div class="modal-header border-0" style="background-color: white;">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <i class="fas fa-times-circle text-danger" style="font-size: 60px;"></i>
+        <h5 class="modal-title mt-3" id="deleteConfirmationModalLabel">Are you sure?</h5>
+        <p class="text-muted">Do you really want to delete these records? This process cannot be undone.</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
     <!-- Edit Hotel Modal -->
     <div class="modal fade" id="editHotelModal" tabindex="-1" aria-labelledby="editHotelLabel" aria-hidden="true">
@@ -546,10 +741,6 @@ thead th {
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="edit_capacity">Capacity</label>
-                            <input type="text" id="edit_capacity" name="capacity" class="form-control" required>
-                        </div>
 
                         <div class="form-group">
                             <label for="edit_description">Description</label>
@@ -580,7 +771,7 @@ thead th {
                             <textarea id="edit_policy" name="policy" rows="3" class="form-control" required></textarea>
                         </div>
 
-                        <div class="form-group">
+                       <div class="form-group">
                             <label for="edit_fully_booked_dates">Fully Booked Dates</label>
                             <input type="text" id="edit_fully_booked_dates" name="fully_booked_dates" class="form-control" readonly>
                             <button type="button" class="btn btn-secondary" id="edit_select_dates">Select Dates</button>
@@ -593,6 +784,7 @@ thead th {
         </div>
     </div>
 
+ 
 
            <!-- Manage Meals Section -->
     <div id="manageMealsSection" class="hidden">
@@ -605,7 +797,7 @@ thead th {
                     <th>Name</th>
                     <th>Price</th>
                     <th>Description</th>
-                    <th>Image</th>
+                    <!-- <th>Image</th> -->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -618,17 +810,19 @@ thead th {
                             <td>₱{$meal['price']}</td>
                             <td>" . substr($meal['description'], 0, 50) . "...</td>";
 
-                        if (!empty($meal['image_url'])) {
-                            echo "<td><img src='images/{$meal['image_url']}' alt='Meal Image' width='100'></td>";
-                        } else {
-                            echo "<td>No Image</td>";
-                        }
+                        // if (!empty($meal['image_url'])) {
+                        //     echo "<td><img src='images/{$meal['image_url']}' alt='Meal Image' width='100'></td>";
+                        // } else {
+                        //     echo "<td>No Image</td>";
+                        // }
 
                         echo "<td>
-                            <a href='edit_meal.php?id={$meal['id']}' class='btn btn-warning btn-sm'>Edit</a> 
-                            <a href='admin_dashboard.php?delete={$meal['id']}&category=meals' class='btn btn-danger btn-sm'>Delete</a>
-                            </td>
-                        </tr>";
+               
+                <a href='#' class='btn btn-danger btn-sm' onclick=\"showDeleteModal('admin_dashboard.php?delete={$meal['id']}&category=meals')\">
+                    <i class='fas fa-trash'></i>
+                </a>
+                </td>
+            </tr>";
                     }
                 } else {
                     echo "<tr><td colspan='6' class='text-center'>No Meals Found</td></tr>";
@@ -636,6 +830,7 @@ thead th {
             </tbody>
         </table>
     </div>
+
 
    <!-- Manage Ferry Tickets Section -->
 <div id="manageFerriesSection" class="hidden">
@@ -709,9 +904,12 @@ thead th {
 
                   
                     echo "<td>
-                        <a href='edit_ferry.php?id={$ferry['id']}' class='btn btn-warning btn-sm'>Edit</a> 
-                        <a href='admin_dashboard.php?delete={$ferry['id']}&category=ferries' class='btn btn-danger btn-sm' onclick='return confirm(\"Are you sure you want to delete this ferry ticket?\");'>Delete</a>
-                    </td>";
+    </a>
+    <a href='#' class='btn btn-danger btn-sm' onclick=\"showDeleteModal('admin_dashboard.php?delete={$ferry['id']}&category=ferries')\">
+        <i class='fas fa-trash'></i>
+    </a>
+</td>";
+
                     echo "</tr>";
                 }
             } else {
@@ -721,6 +919,7 @@ thead th {
     </table>
 </div>
 
+
 <!-- Manage Tours Section -->
 <div id="manageToursSection">
     <h3>Manage Tours</h3>
@@ -729,11 +928,13 @@ thead th {
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Tour Name</th>
                 <th>Tour Type</th>
+                <th>Duration</th>
                 <th>Price (Adult)</th>
                 <th>Price (Kid)</th>
                 <th>Inclusion</th>
-                <th>Exclusion</th>
+                <th>Description</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -741,20 +942,25 @@ thead th {
             <?php if ($tours->num_rows > 0) {
                 while ($tour = $tours->fetch_assoc()) {
                     echo "<tr>
-                        <td>{$tour['id']}</td>
-                        <td>{$tour['tour_type']}</td>
-                        <td>\${$tour['price_adult']}</td>
-                        <td>\${$tour['price_kid']}</td>
-                        <td>{$tour['inclusion']}</td>
-                        <td>{$tour['exclusion']}</td>
-                        <td>
-                            <button class='btn btn-warning btn-sm' data-id='{$tour['id']}' data-tourtype='{$tour['tour_type']}' data-priceadult='{$tour['price_adult']}' data-pricekid='{$tour['price_kid']}' data-inclusion='{$tour['inclusion']}' data-exclusion='{$tour['exclusion']}' onclick='openEditModal(this)'>Edit</button> 
-                            <a href='admin_dashboard.php?delete={$tour['id']}&category=tours' class='btn btn-danger btn-sm'>Delete</a>
-                        </td>
-                    </tr>";
+        <td>{$tour['id']}</td>
+        <td>{$tour['name']}</td>
+        <td>{$tour['tour_type']}</td>
+        <td>{$tour['duration']}</td>
+        <td>\${$tour['price_adult']}</td>
+        <td>\${$tour['price_kid']}</td>
+        <td>{$tour['inclusion']}</td>
+        <td>{$tour['description']}</td>
+        <td>
+            
+            <a href='#' class='btn btn-danger btn-sm' 
+               onclick=\"showDeleteModal('admin_dashboard.php?delete={$tour['id']}&category=tours')\">
+               <i class='fas fa-trash'></i>
+            </a>
+        </td>
+    </tr>";
                 }
             } else {
-                echo "<tr><td colspan='7' class='text-center'>No Tours Found</td></tr>";
+                echo "<tr><td colspan='9' class='text-center'>No Tours Found</td></tr>";
             } ?>
         </tbody>
     </table>
@@ -800,6 +1006,82 @@ thead th {
                 </form>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="salesReportSection" class="hidden">
+    <h3>Sales Report</h3>
+    
+    <!-- Date Filter Form -->
+    <form method="GET" action="admin_dashboard.php?section=salesReport">
+        <label for="from_date">From:</label>
+        <input type="date" name="from_date" value="<?php echo $_GET['from_date'] ?? ''; ?>">
+        <label for="to_date">To:</label>
+        <input type="date" name="to_date" value="<?php echo $_GET['to_date'] ?? ''; ?>">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+    
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Booking ID</th>
+                    <th>Total Price</th>
+                    <th>Sales Date</th>
+                    <th>Payment Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Fetching filter values from the GET request
+                $from_date = $_GET['from_date'] ?? null;
+                $to_date = $_GET['to_date'] ?? null;
+
+                // Default SQL query (without filter)
+                $sql_sales = "SELECT s.id, s.booking_id, s.total_price, s.sales_date, s.payment_method 
+                              FROM sales s WHERE 1";
+
+                // Adding date filter to the SQL query
+                if ($from_date && $to_date) {
+                    $sql_sales .= " AND s.sales_date BETWEEN ? AND ?";
+                    $stmt = $conn->prepare($sql_sales);
+                    $stmt->bind_param('ss', $from_date, $to_date);
+                } elseif ($from_date) {
+                    
+                    $sql_sales .= " AND s.sales_date >= ?";
+                    $stmt = $conn->prepare($sql_sales);
+                    $stmt->bind_param('s', $from_date);
+                } elseif ($to_date) {
+                    
+                    $sql_sales .= " AND s.sales_date <= ?";
+                    $stmt = $conn->prepare($sql_sales);
+                    $stmt->bind_param('s', $to_date);
+                } else {
+                    // No filters applied
+                    $stmt = $conn->prepare($sql_sales);
+                }
+
+                $stmt->execute();
+                $sales = $stmt->get_result();
+
+               
+                if ($sales->num_rows > 0) {
+                    while ($sale = $sales->fetch_assoc()) {
+                        echo "<tr>
+                            <td>{$sale['id']}</td>
+                            <td>{$sale['booking_id']}</td>
+                            <td>₱" . number_format($sale['total_price'], 2) . "</td>
+                            <td>{$sale['sales_date']}</td>
+                            <td>{$sale['payment_method']}</td>
+                        </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5' class='text-center'>No sales available for this date range.</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -977,8 +1259,7 @@ thead th {
     </div>
 </div>
 
-
-            <!-- Add Meals Modal -->
+          <!-- Add Meals Modal -->
             <div class="modal fade" id="addMealsModal" tabindex="-1" aria-labelledby="addMealsLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -1155,49 +1436,57 @@ thead th {
             </div>
             <div class="modal-body">
                 <form action="add_tour.php" method="POST" enctype="multipart/form-data">
+                    <!-- Name field -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Tour Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <!-- Tour Type -->
                     <div class="mb-3">
                         <label for="tour_type" class="form-label">Tour Type</label>
                         <select class="form-select" id="tour_type" name="tour_type" required>
-                            <option value="Snorkeling Tour">Snorkeling Tour</option>
-                            <option value="Island Hopping Tour">Island Hopping Tour</option>
+                            <option value="Snorkeling">Snorkeling Tour</option>
+                            <option value="Island Hopping">Island Hopping Tour</option>
                             <option value="Land Tour">Land Tour</option>
                         </select>
                     </div>
+
+                    <!-- Inclusion -->
                     <div class="mb-3">
-                        <label for="inclusion" class="form-label">Inclusion</label>
-                        <textarea class="form-control" id="inclusion" name="inclusion" rows="3" required></textarea>
+                            <label for="inclusions" class="form-label">Inclusions</label>
+                            <textarea class="form-control" id="itenerary" name="itinerary" rows="3" placeholder="List of inclusions"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="exclusion" class="form-label">Exclusion</label>
-                        <textarea class="form-control" id="exclusion" name="exclusion" rows="3" required></textarea>
-                    </div>
+                        
+
+                    <!-- Duration -->
                     <div class="mb-3">
                         <label for="duration" class="form-label">Duration</label>
-                        <input type="text" class="form-control" id="duration" name="duration" required>
+                        <input type="text" class="form-control" id="duration" name="duration" placeholder="e.g., 4hrs, 2 days" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="itinerary" class="form-label">Itinerary</label>
-                        <textarea class="form-control" id="itinerary" name="itinerary" rows="3" required></textarea>
-                    </div>
+                    
+                    <!-- Description -->
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                     </div>
+
+                    <!-- Price for Adults -->
                     <div class="mb-3">
                         <label for="price_adult" class="form-label">Price (Adult)</label>
-                        <input type="number" class="form-control" id="price_adult" name="price_adult" required>
+                        <input type="number" step="0.01" class="form-control" id="price_adult" name="price_adult" required>
                     </div>
+
+                    <!-- Price for Kids -->
                     <div class="mb-3">
                         <label for="price_kid" class="form-label">Price (Kid)</label>
-                        <input type="number" class="form-control" id="price_kid" name="price_kid" required>
+                        <input type="number" step="0.01" class="form-control" id="price_kid" name="price_kid">
                     </div>
+
+                    <!-- Thumbnail Image -->
                     <div class="mb-3">
                         <label for="thumbnail_image" class="form-label">Thumbnail Image</label>
                         <input type="file" class="form-control" id="thumbnail_image" name="thumbnail_image" accept="image/*" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="gallery_images" class="form-label">Gallery Images</label>
-                        <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" accept="image/*" multiple required>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Add Tour</button>
@@ -1207,11 +1496,12 @@ thead th {
     </div>
 </div>
 
+
         </div> 
         <!-- JavaScript -->
         <script>
             function toggleSection(sectionId) {
-                const sections = ['dashboardSection', 'manageBookingsSection', 'manageHotelsSection', 'manageMealsSection', 'manageFerriesSection', 'manageToursSection'];
+                const sections = ['dashboardSection', 'manageBookingsSection', 'manageHotelsSection', 'manageMealsSection', 'manageFerriesSection', 'manageToursSection','salesReportSection'];
                 sections.forEach(function(section) {
                     document.getElementById(section).style.display = section === sectionId ? 'block' : 'none';
                 });
@@ -1239,8 +1529,8 @@ thead th {
                 var tourModal = new bootstrap.Modal(document.getElementById('addTourModal'), {});
                 tourModal.show();
             });
-     document.getElementById('hotel_images').addEventListener('change', function(event) {
-        const imagePreview = document.getElementById('imagePreview');
+            document.getElementById('hotel_images').addEventListener('change', function(event) {
+                const imagePreview = document.getElementById('imagePreview');
 
         
         if (event.target.files && event.target.files.length > 0) {
@@ -1304,7 +1594,96 @@ thead th {
         reader.readAsDataURL(file);
     }
 });
-       
+    function showDeleteModal(deleteUrl) {
+    var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    confirmDeleteBtn.href = deleteUrl;
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+    deleteModal.show();
+}
+    let bookedDates = [];
+
+    function openDateModal(hotelId) {
+ 
+    document.getElementById('hotelId').value = hotelId;
+
+    bookedDates = [];
+    document.getElementById('dateList').innerHTML = ''; 
+
+    
+    $.ajax({
+        url: 'get_fully_booked_dates.php', 
+        type: 'GET',
+        data: { hotel_id: hotelId },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                
+                response.dates.forEach(function(date) {
+                    bookedDates.push(date); 
+                    document.getElementById('dateList').innerHTML += `<div>${date} <button class="btn btn-danger btn-sm" onclick="removeDate('${date}')">Remove</button></div>`;
+                });
+            } else {
+                alert("Error fetching booked dates: " + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching dates:", error);
+            alert("An error occurred while fetching the booked dates.");
+        }
+    });
+
+    // Show the modal
+    $('#dateModal').modal('show');
+}
+
+
+    function addBookedDate() {
+        const dateInput = document.getElementById('bookedDates');
+        const dateValue = dateInput.value;
+
+        if (dateValue) {
+            bookedDates.push(dateValue);
+            document.getElementById('dateList').innerHTML += `<div>${dateValue} <button class="btn btn-danger btn-sm" onclick="removeDate('${dateValue}')">Remove</button></div>`;
+            dateInput.value = ''; // Clear the input
+        }
+    }
+
+    function removeDate(date) {
+        bookedDates = bookedDates.filter(d => d !== date);
+        document.getElementById('dateList').innerHTML = bookedDates.map(d => `<div>${d} <button class="btn btn-danger btn-sm" onclick="removeDate('${d}')">Remove</button></div>`).join('');
+    }
+    function saveBookedDates() {
+    const hotelId = document.getElementById('hotelId').value;
+
+   
+    if (bookedDates.length === 0) {
+        alert("No dates to save!");
+        return;
+    }
+
+   
+    $.ajax({
+        url: 'set_fully_booked_dates.php', 
+        type: 'POST',
+        data: {
+            hotel_id: hotelId,
+            booked_dates: bookedDates
+        },
+        dataType: 'json', 
+        success: function(response) {
+            if (response.success) {
+                alert(response.message);
+                $('#dateModal').modal('hide'); 
+            } else {
+                alert("Error: " + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error saving dates:", error);
+            alert("An error occurred while saving the dates.");
+        }
+    });
+}
 
  </script>
 
