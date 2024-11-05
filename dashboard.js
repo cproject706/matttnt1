@@ -1058,11 +1058,18 @@ document.getElementById('confirmBookingBtn').addEventListener('click', function 
 
 
 
-function printBooking() {
+function printBooking(button) {
     var logoPath = 'images/mattlogo.jpg'; 
-    var printContents = document.querySelector('#bookingsModal .modal-body').innerHTML;
-    
-   
+
+    // Get the booking details from the button's data attributes
+    var bookingId = button.getAttribute('data-id');
+    var username = button.getAttribute('data-username');
+    var email = button.getAttribute('data-email');
+    var contactNumber = button.getAttribute('data-contact');
+    var totalPrice = button.getAttribute('data-price');
+    var bookingDate = button.getAttribute('data-date');
+
+    // Construct the printable HTML
     var printableHTML = `
     <html>
         <head>
@@ -1114,15 +1121,19 @@ function printBooking() {
             </div>
             <div class="content">
                 <h2>Your Booking Details</h2>
-                ` + printContents + `
+                <ul>
+                    <li><strong>Booking ID:</strong> ${bookingId}</li>
+                    <li><strong>Username:</strong> ${username}</li>
+                    <li><strong>Email:</strong> ${email}</li>
+                    <li><strong>Contact Number:</strong> ${contactNumber}</li>
+                    <li><strong>Total Price:</strong> ${totalPrice}</li>
+                    <li><strong>Booking Date:</strong> ${bookingDate}</li>
+                </ul>
             </div>
         </body>
     </html>
     `;
-    
-    var originalContents = document.body.innerHTML;
-    
-    
+
     var printWindow = window.open('', '', 'height=600,width=800');
     printWindow.document.write(printableHTML);
     printWindow.document.close(); 
@@ -1130,6 +1141,7 @@ function printBooking() {
     printWindow.print(); 
     printWindow.close(); 
 }
+
 document.addEventListener('click', function(event) {
     if (event.target.classList.contains('remove-item')) {
         const productId = event.target.getAttribute('data-product-id');
@@ -1169,14 +1181,12 @@ function updateCartBadge() {
 }
 
 
-
     document.addEventListener('DOMContentLoaded', function () {
         const creditCardRadio = document.getElementById('creditCard');
         const gcashRadio = document.getElementById('gcash');
         const creditCardFields = document.getElementById('creditCardFields');
         const gcashFields = document.getElementById('gcashFields');
 
-      
         creditCardRadio.addEventListener('change', function () {
             if (this.checked) {
                 creditCardFields.style.display = 'block';
@@ -1191,3 +1201,74 @@ function updateCartBadge() {
             }
         });
     });
+
+
+document.getElementById("payNowButton").addEventListener("click", function () {
+    const username = document.getElementById("hiddenUsername").value;
+    const email = document.getElementById("hiddenEmail").value;
+    const contactNumber = document.getElementById("contactNumber").value;
+    const totalAmount = 5000; // Replace this with your dynamic total amount
+
+    // Basic validation
+    if (!contactNumber) {
+        alert("Please provide a contact number.");
+        return;
+    }
+
+    // Initialize Xendit
+    Xendit.setPublishableKey("xnd_public_production_oSEM5wnHmE1EcrhbzoGGMrtFatvDL95PU6OR5atmSYMf18kdb12xRrJfKXY90wS");
+
+    // Create a token request
+    const tokenData = {
+        amount: totalAmount,
+        currency: "PHP",
+        customer: {
+            email: email,
+            given_names: username,
+            mobile_number: contactNumber
+        },
+        description: "Payment for booking"
+    };
+
+    Xendit.createToken(tokenData, function (err, token) {
+        if (err) {
+            console.error("Error creating token:", err);
+            alert("Failed to create payment token. Please try again.");
+            return;
+        }
+
+        // If token creation is successful
+        if (token && token.status === "SUCCESS") {
+            // Send token to your backend for further processing
+            sendTokenToServer(token.id);
+        } else {
+            alert("Payment token creation failed. Please try again.");
+        }
+    });
+});
+
+// Function to send token to your backend
+function sendTokenToServer(tokenId) {
+    // Make an AJAX request to your server to handle the payment
+    fetch("save_booking.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ tokenId: tokenId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Payment successful! Booking confirmed.");
+            // Redirect or update the UI as needed
+        } else {
+            alert("Payment failed. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while processing the payment.");
+    });
+}
+

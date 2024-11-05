@@ -120,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     );
 
     if ($stmt->execute()) {
-        // Handle fully booked dates
+      
         $conn->query("DELETE FROM fully_booked_dates WHERE hotel_id = $hotel_id");
 
         $selectedDates = isset($_POST['fully_booked_dates']) ? explode(',', $_POST['fully_booked_dates']) : [];

@@ -358,6 +358,8 @@ $result = $conn->query($sql);
 </head>
 
 <body>
+
+    
     <nav class="navbar navbar-expand-lg bg-light shadow" id="navbar">
         <div class="container-fluid d-flex align-items-center flex-column">
             <!-- Logo and Text -->
@@ -375,7 +377,7 @@ $result = $conn->query($sql);
                     <!-- Shopping Cart link -->
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
-                            <i class="fas fa-shopping-cart"></i> Shopping Cart
+                            <i class="fas fa-suitcase"></i> Travel Bag
                             <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
                                 0
                             </span>
@@ -404,11 +406,10 @@ $result = $conn->query($sql);
 
 
 
-
     <!-- Offcanvas Shopping Cart -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart" aria-labelledby="offcanvasCartLabel">
         <div class="offcanvas-header">
-            <h5 id="offcanvasCartLabel">Shopping Cart</h5>
+            <h5 id="offcanvasCartLabel">Travel Bag</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
@@ -425,6 +426,7 @@ $result = $conn->query($sql);
             <!-- Proceed to Checkout Button -->
             <button id="proceedToCheckout" class="btn btn-primary">Proceed to Checkout</button>
         </div>
+        
     </div>
 
     <!-- Profile Modal Example -->
@@ -454,29 +456,39 @@ $result = $conn->query($sql);
                 <h5 class="modal-title" id="bookingsModalLabel">My Bookings</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <?php
-                // Assuming $username is available and you're fetching bookings for the logged-in user
-                $query = "SELECT * FROM bookings WHERE username = '$username'";
-                $bookings_result = $conn->query($query);
+           <div class="modal-body">
+    <?php
+    // Assuming $username is available and you're fetching bookings for the logged-in user
+    $query = "SELECT * FROM bookings WHERE username = '$username'";
+    $bookings_result = $conn->query($query);
 
-                if ($bookings_result->num_rows > 0): ?>
-                    <ul class="list-group">
-                        <?php while ($booking = $bookings_result->fetch_assoc()): ?>
-                            <li class="list-group-item">
-                                <strong>Booking ID:</strong> <?php echo htmlspecialchars($booking['id']); ?><br>
-                                <strong>Username:</strong> <?php echo htmlspecialchars($booking['username']); ?><br>
-                                <strong>Email:</strong> <?php echo htmlspecialchars($booking['email']); ?><br>
-                                <strong>Contact Number:</strong> <?php echo htmlspecialchars($booking['contact_number']); ?><br>
-                                <strong>Total Price:</strong> <?php echo htmlspecialchars($booking['total_price']); ?><br>
-                                <strong>Booking Date:</strong> <?php echo htmlspecialchars($booking['booking_date']); ?><br>
-                            </li>
-                        <?php endwhile; ?>
-                    </ul>
-                <?php else: ?>
-                    <p>No bookings available at the moment.</p>
-                <?php endif; ?>
-            </div>
+    if ($bookings_result->num_rows > 0): ?>
+        <ul class="list-group">
+            <?php while ($booking = $bookings_result->fetch_assoc()): ?>
+                <li class="list-group-item">
+                    <strong>Booking ID:</strong> <?php echo htmlspecialchars($booking['id']); ?><br>
+                    <strong>Username:</strong> <?php echo htmlspecialchars($booking['username']); ?><br>
+                    <strong>Email:</strong> <?php echo htmlspecialchars($booking['email']); ?><br>
+                    <strong>Contact Number:</strong> <?php echo htmlspecialchars($booking['contact_number']); ?><br>
+                    <strong>Total Price:</strong> <?php echo htmlspecialchars($booking['total_price']); ?><br>
+                    <strong>Booking Date:</strong> <?php echo htmlspecialchars($booking['booking_date']); ?><br>
+                    <button type="button" class="btn btn-primary" 
+                            data-id="<?php echo htmlspecialchars($booking['id']); ?>"
+                            data-username="<?php echo htmlspecialchars($booking['username']); ?>"
+                            data-email="<?php echo htmlspecialchars($booking['email']); ?>"
+                            data-contact="<?php echo htmlspecialchars($booking['contact_number']); ?>"
+                            data-price="<?php echo htmlspecialchars($booking['total_price']); ?>"
+                            data-date="<?php echo htmlspecialchars($booking['booking_date']); ?>"
+                            onclick="printBooking(this)">Print Confirmation</button>
+                </li>
+            <?php endwhile; ?>
+        </ul>
+    <?php else: ?>
+        <p>No bookings available at the moment.</p>
+    <?php endif; ?>
+</div>
+
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <!-- Print Button -->
@@ -585,12 +597,12 @@ $result = $conn->query($sql);
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <h5 class="card-title">Nearby Establishments</h5>
-                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 m</small></p>
-                                                <p class="text-muted mt-3"><small>Aqua Restobar - 190 m</small></p>
-                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 m</small></p>
-                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 m</small></p>
-                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 m</small></p>
-                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 m</small></p>
+                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Aqua Restobar - 190 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small></p>
+                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 meters</small></p>
                                             </div>
                                         </div>
                                     </div>
@@ -636,7 +648,7 @@ $result = $conn->query($sql);
                 data-price-4d3n-adult="' . htmlspecialchars($product['price_4d3n_adult']) . '"
                 data-price-4d3n-kid="' . htmlspecialchars($product['price_4d3n_kid']) . '"
                 data-capacity="' . htmlspecialchars($product['capacity']) . '">
-                <i class="fas fa-shopping-bag"></i> Add to Cart
+                <i class="fas fa-suitcase"></i> Add to Travel Bag
             </a>';
 
                                     // View More button (link to details.php)
@@ -735,12 +747,12 @@ $result = $conn->query($sql);
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <h5 class="card-title">Nearby Establishments</h5>
-                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 m</small></p>
-                                                <p class="text-muted mt-3"><small>Aqua Restobar - 190 m</small></p>
+                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Aqua Restobar - 190 meters</small></p>
                                                 <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 m</small></p>
-                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 m</small></p>
-                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 m</small></p>
-                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 m</small></p>
+                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small></p>
+                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 meters</small></p>
                                             </div>
                                         </div>
                                     </div>
@@ -784,7 +796,7 @@ $result = $conn->query($sql);
                 data-price-4d3n-adult="' . htmlspecialchars($product['price_4d3n_adult']) . '"
                 data-price-4d3n-kid="' . htmlspecialchars($product['price_4d3n_kid']) . '"
                 data-capacity="' . htmlspecialchars($product['capacity']) . '">
-                <i class="fas fa-shopping-bag"></i> Add to Cart
+                <i class="fas fa-suitcase"></i> Add to Travel Bag
             </a>';
 
                                     // View More button (link to details.php)
@@ -821,12 +833,12 @@ $result = $conn->query($sql);
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <h5 class="card-title">Nearby Establishments</h5>
-                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 m</small></p>
-                                                <p class="text-muted mt-3"><small>Aqua Restobar - 190 m</small></p>
-                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 m</small></p>
-                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 m</small></p>
-                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 m</small></p>
-                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 m</small></p>
+                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Aqua Restobar - 190 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small></p>
+                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 meters</small></p>
                                             </div>
                                         </div>
                                     </div>
@@ -915,7 +927,7 @@ $result = $conn->query($sql);
                         data-meal-name="' . htmlspecialchars($meal['name']) . '" 
                         data-meal-price="' . htmlspecialchars($meal['price']) . '" 
                         data-meal-image="' . htmlspecialchars($meal['image_url']) . '">
-                        Add to Cart
+                        <i class="fas fa-suitcase"></i> Add to Travel Bag
                     </button>';
 
                             echo '</div>';
@@ -953,7 +965,7 @@ $result = $conn->query($sql);
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" id="confirmMealAddToCart" class="btn btn-primary">Add to Cart</button>
+                                    <button type="button" id="confirmMealAddToCart" class="btn btn-primary">Add to Travel Bag</button>
                                 </div>
                             </div>
                         </div>
@@ -1045,7 +1057,7 @@ $result = $conn->query($sql);
                 data-bs-target="#addToCartModal"
                 data-ferry-schedule="' . htmlspecialchars($ferry['schedule']) . '" 
                 data-ferry-vessel="' . htmlspecialchars($ferry['vessel']) . '" 
-                data-prices=\'' . json_encode($prices) . '\'>Add to Cart</button>';
+                data-prices=\'' . json_encode($prices) . '\'><i class="fas fa-suitcase"></i> Add to Travel Bag</button>';
 
 
 
@@ -1138,7 +1150,7 @@ $result = $conn->query($sql);
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="addToCartBtn">Add to Cart</button>
+                                    <button type="button" class="btn btn-primary" id="addToCartBtn">Add to Travel Bag</button>
                                 </div>
                             </div>
                         </div>
@@ -1165,7 +1177,7 @@ $result = $conn->query($sql);
                                         <p class="card-text"><strong>Price (Kid):</strong> ₱<?php echo number_format($tour['price_kid'], 2); ?></p>
                                         <!-- Add to Cart Button -->
                                         <button class="btn btn-success addToCartBtn" data-bs-toggle="modal" data-bs-target="#addToCartModal<?php echo $tour['id']; ?>" data-tour-id="<?php echo $tour['id']; ?>" data-tour-name="<?php echo htmlspecialchars($tour['tour_type']); ?>" data-price-adult="<?php echo $tour['price_adult']; ?>" data-price-kid="<?php echo $tour['price_kid']; ?>">
-                                            Add to Cart
+                                            <i class="fas fa-suitcase"></i> Add to Travel Bag
                                         </button>
                                         <!-- View More Button -->
                                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tourModal<?php echo $tour['id']; ?>">View More</button>
@@ -1243,7 +1255,7 @@ $result = $conn->query($sql);
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary confirmAddToCart" data-tour-id="<?php echo $tour['id']; ?>">Add to Cart</button>
+                                            <button type="button" class="btn btn-primary confirmAddToCart" data-tour-id="<?php echo $tour['id']; ?>">Add to Travel Bag</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1288,7 +1300,10 @@ $result = $conn->query($sql);
                             <div id="totalPriceSummary" class="me-auto"><strong>Total Amount: ₱0.00</strong></div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <!-- <button type="button" class="btn btn-primary" id="confirmBookingBtn">Confirm Booking</button> -->
-                             <button type="button" class="btn btn-primary" id="payNowButton" data-bs-toggle="modal" data-bs-target="#paymentModal">Pay Now</button>
+                             <a href="https://checkout.xendit.co/od/paymentbooking" target="_blank" class="btn btn-primary">
+                                Make Payment via GCASH
+                            </a>
+
                         </div>
                     </div>
                 </div>
@@ -1303,7 +1318,7 @@ $result = $conn->query($sql);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="paymentForm" action="your_payment_processor.php" method="POST">
+                <form id="paymentForm" action="confirmBooking.php" method="POST">
                     <!-- Payment Method Selection -->
                     <div class="mb-3">
                         <label for="paymentMethod" class="form-label"><strong>Select Payment Method:</strong></label>
@@ -1362,30 +1377,6 @@ $result = $conn->query($sql);
     </div>
 </div>
 
-<!-- JavaScript to Handle Payment Method Switching -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const creditCardRadio = document.getElementById('creditCard');
-        const gcashRadio = document.getElementById('gcash');
-        const creditCardFields = document.getElementById('creditCardFields');
-        const gcashFields = document.getElementById('gcashFields');
-
-        // Show/Hide fields based on selected payment method
-        creditCardRadio.addEventListener('change', function () {
-            if (this.checked) {
-                creditCardFields.style.display = 'block';
-                gcashFields.style.display = 'none';
-            }
-        });
-
-        gcashRadio.addEventListener('change', function () {
-            if (this.checked) {
-                creditCardFields.style.display = 'none';
-                gcashFields.style.display = 'block';
-            }
-        });
-    });
-</script>
 
         </div>
     </div>

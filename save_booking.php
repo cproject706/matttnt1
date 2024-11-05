@@ -1,57 +1,27 @@
 <?php
+require 'vendor/autoload.php'; // Load the Xendit PHP SDK
 
-// Include the database connection file
-include 'db_connection.php';
+use Xendit\Xendit;
 
-// Retrieve data from the POST request
-$username = $_POST['username'];
-$email = $_POST['email'];
-$contactNumber = $_POST['contactNumber'];
-$totalAmount = $_POST['totalAmount'];
-$downPayment = $totalAmount * 0.20;
-$balance = $totalAmount - $downPayment;
+Xendit::setApiKey('xnd_production_WaPtv4RQlder89kyAtK0brJnmtTZ4HtLlziAYy1VxDHuOwHtQmoU4OdlcUI3d');
 
-// Insert booking into the newbookings table
-$insertBookingQuery = "INSERT INTO newbookings (username, email, contact_number, total_amount, down_payment, balance) 
-                       VALUES (?, ?, ?, ?, ?, ?)";
-$stmt = $connection->prepare($insertBookingQuery);
-$stmt->bind_param("sssddd", $username, $email, $contactNumber, $totalAmount, $downPayment, $balance);
+$input = json_decode(file_get_contents('php://input'), true);
+$tokenId = $input['tokenId'];
 
-if ($stmt->execute()) {
-    $bookingId = $connection->insert_id; // Get the inserted booking ID
+try {
+    $charge = \Xendit\Card::create([
+        'token_id' => $tokenId,
+        'external_id' => 'booking_' . time(), // Unique ID for the transaction
+        'amount' => 5000 // Replace with the actual amount
+    ]);
 
-    // Insert each item from the cart summary into the CartItems table
-    $insertCartItemQuery = "INSERT INTO CartItems (booking_id, product_name, check_in_date, check_out_date, nights, rooms, adults, kids, quantity, date, schedule, seniors, total_price) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmtCart = $connection->prepare($insertCartItemQuery);
-
-    foreach ($_POST['cartSummary'] as $item) {
-        // Extract item details
-        $productName = $item['productName'];
-        $checkInDate = $item['checkInDate'] ?? NULL;
-        $checkOutDate = $item['checkOutDate'] ?? NULL;
-        $nights = $item['nights'] ?? NULL;
-        $rooms = $item['rooms'] ?? NULL;
-        $adults = $item['adults'] ?? NULL;
-        $kids = $item['kids'] ?? NULL;
-        $quantity = $item['quantity'] ?? NULL;
-        $date = $item['date'] ?? NULL;
-        $schedule = $item['schedule'] ?? NULL;
-        $seniors = $item['seniors'] ?? NULL;
-        $totalPrice = $item['totalPrice'];
-
-        // Bind parameters for the cart item query
-        $stmtCart->bind_param("isssiiiiiisdi", $bookingId, $productName, $checkInDate, $checkOutDate, $nights, $rooms, $adults, $kids, $quantity, $date, $schedule, $seniors, $totalPrice);
-        $stmtCart->execute();
+    if ($charge['status'] === 'CAPTURED') {
+        // Payment successful
+        echo json_encode(['success' => true]);
+    } else {
+        // Payment failed
+        echo json_encode(['success' => false]);
     }
-
-    echo "Booking and cart items saved successfully!";
-} else {
-    echo "Error: " . $stmt->error;
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
-
-// Close the prepared statements and connection
-$stmt->close();
-$stmtCart->close();
-$connection->close();
-?>
