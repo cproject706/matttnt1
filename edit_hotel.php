@@ -10,7 +10,7 @@ include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form inputs
-    $hotel_id = $_POST['hotel_id'];  
+    $hotel_id = $_POST['hotel_id'];
     $name = $_POST['hotel_name'];
     $price_2d1n_adult = $_POST['price_2d1n_adult'];
     $price_2d1n_kid = $_POST['price_2d1n_kid'];
@@ -74,13 +74,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             price_3d2n_kid = ?, 
             price_4d3n_adult = ?, 
             price_4d3n_kid = ?";
-    
- 
+
+
     $params = [
-        &$name, &$check_in, &$check_out, &$features, &$capacity,
-        &$description, &$inclusions, &$exclusions, &$policy,
-        &$price_2d1n_adult, &$price_2d1n_kid, &$price_3d2n_adult,
-        &$price_3d2n_kid, &$price_4d3n_adult, &$price_4d3n_kid
+        &$name,
+        &$check_in,
+        &$check_out,
+        &$features,
+        &$capacity,
+        &$description,
+        &$inclusions,
+        &$exclusions,
+        &$policy,
+        &$price_2d1n_adult,
+        &$price_2d1n_kid,
+        &$price_3d2n_adult,
+        &$price_3d2n_kid,
+        &$price_4d3n_adult,
+        &$price_4d3n_kid
     ];
 
     if ($thumbnailPath) {
@@ -105,9 +116,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param($types, ...$params);
 
     if ($stmt->execute()) {
-        
+
         if ($stmt->affected_rows > 0) {
-            header("Location: admin_dashboard.php"); 
+            header("Location: admin_dashboard.php");
             exit();
         } else {
             echo "Update failed: No rows were affected. Please check the input data or hotel ID.";
@@ -118,4 +129,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt->close();
 }
-?>
