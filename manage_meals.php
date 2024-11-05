@@ -44,7 +44,7 @@ $result = $conn->query($sql);
                         echo "<td>" . htmlspecialchars($meal['name']) . "</td>";
                         echo "<td>$" . number_format($meal['price'], 2) . "</td>";
                         echo "<td>" . htmlspecialchars(substr($meal['description'], 0, 50)) . "...</td>";
-                        echo "<td><img src='" . htmlspecialchars($meal['image_url']) . "' alt='Meal Image' width='100'></td>";
+                        echo "<td><img src='" . htmlspecialchars($meal['image_url']) . "' alt='Meal Image' width='200'></td>";
                         echo "<td><a href='edit_meal.php?id=" . $meal['id'] . "' class='btn btn-warning btn-sm'>Edit</a> ";
                         echo "<a href='delete_meal.php?id=" . $meal['id'] . "' class='btn btn-danger btn-sm'>Delete</a></td>";
                         echo "</tr>";

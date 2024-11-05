@@ -540,6 +540,40 @@ classSelect.addEventListener('change', function () {
     }
 });
 
+// JavaScript to handle the image modal functionality
+document.addEventListener("DOMContentLoaded", function () {
+    const imageModal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+
+    // Open image modal with correct image
+    imageModal.addEventListener('show.bs.modal', function (event) {
+        const image = event.relatedTarget.getAttribute('data-image');
+        modalImage.setAttribute('src', image);
+    });
+
+    // JavaScript for other modals (existing code)
+    const mealModal = document.getElementById('mealModal');
+    mealModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const mealName = button.getAttribute('data-meal-name');
+        const mealPrice = button.getAttribute('data-meal-price');
+        const mealImage = button.getAttribute('data-meal-image');
+        document.getElementById('mealName').textContent = mealName;
+        document.getElementById('mealPrice').textContent = mealPrice;
+        document.getElementById('mealImage').setAttribute('src', mealImage);
+    });
+
+    document.getElementById('minusMealQuantityModal').addEventListener('click', function () {
+        const quantityInput = document.getElementById('mealQuantityModal');
+        if (quantityInput.value > 1) quantityInput.value--;
+    });
+
+    document.getElementById('plusMealQuantityModal').addEventListener('click', function () {
+        const quantityInput = document.getElementById('mealQuantityModal');
+        quantityInput.value++;
+    });
+});
+
 
 
 
@@ -556,6 +590,8 @@ document.addEventListener('DOMContentLoaded', function () {
             input.value = parseInt(input.value) - 1;
         }
     });
+
+    
 
     // Add event listener to open modal and populate it with the meal data
     document.querySelectorAll('.add-to-cart-meal').forEach(function (button) {
@@ -578,6 +614,8 @@ document.addEventListener('DOMContentLoaded', function () {
             confirmButton.setAttribute('data-meal-image', mealImage);
         });
     });
+
+    
 
     // Add event listener for confirming and adding meal to cart
     document.getElementById('confirmMealAddToCart').addEventListener('click', function () {

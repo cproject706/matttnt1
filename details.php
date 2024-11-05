@@ -45,7 +45,7 @@ if (isset($_GET['id'])) {
         // Display Inclusions
         echo '<div class="section">';
         echo '<h3>Inclusions:</h3>';
-        echo '<ul class="list-section">';
+        echo '<ul class="list-section" id="content">';
         $inclusions = explode("\n", htmlspecialchars($product['inclusions']));
         foreach ($inclusions as $inclusion) {
             echo '<li>' . $inclusion . '</li>';
@@ -67,7 +67,7 @@ if (isset($_GET['id'])) {
         // Display Policy
         echo '<div class="section">';
         echo '<h3>Policy:</h3>';
-        echo '<ul class="list-section">';
+        echo '<ul class="list-section" id="policyText">';
         $policies = explode("\n", htmlspecialchars($product['policy']));
         foreach ($policies as $policy) {
             echo '<li>' . $policy . '</li>';
@@ -305,6 +305,41 @@ if (isset($_GET['id'])) {
             }
         });
     });
+
+
+    // Select the content
+    const contentDiv = document.getElementById('content');
+        // Replace the specific words with bolded versions
+        contentDiv.innerHTML = contentDiv.innerHTML
+            .replace('Includes:', '<b>Includes:</b>')
+            .replace('You’ll see:', '<b>You’ll see:</b>');
+
+
+    // Define the keywords to make bold
+    const keywords = [
+            "20% Down Payment:",
+            "Balance Payment:",
+            "Non-Refundable Deposits:",
+            "Rebooking:",
+            "Cancellation Notice:",
+            "Port Terminal Fee and Environmental Fee:",
+            "Assistance with Travel Arrangements:",
+            "Common Kitchen:"
+        ];
+
+        // Get the content element
+        const content = document.getElementById('policyText').innerHTML;
+
+        // Replace each keyword with bolded version
+        let formattedContent = content;
+        keywords.forEach(keyword => {
+            const regex = new RegExp(`(${keyword})`, 'g');
+            formattedContent = formattedContent.replace(regex, '<strong>$1</strong>');
+        });
+
+        // Update the element with formatted content
+        document.getElementById('policyText').innerHTML = formattedContent;
+
 </script>
 
 </body>

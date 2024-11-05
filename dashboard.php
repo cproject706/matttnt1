@@ -86,11 +86,11 @@ $result = $conn->query($sql);
 
         }
 
-         h2 {
+        h2 {
             font-family: 'Poppins', sans-serif;
             font-size: 2rem;
             font-weight: 600;
-            color: #3498db; 
+            color: #3498db;
             text-align: center;
             margin-top: 50px;
             text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
@@ -304,16 +304,17 @@ $result = $conn->query($sql);
                 width: auto;
             }
         }
+
         .remove-item {
-            align-self: flex-end; 
+            align-self: flex-end;
         }
 
-       
+
         @media (max-width: 576px) {
             h2 {
-                font-size: 1.5rem; 
-                margin-top: 100px; 
-                padding: 0 10px; 
+                font-size: 1.5rem;
+                margin-top: 100px;
+                padding: 0 10px;
             }
 
             .navbar-brand {
@@ -329,10 +330,10 @@ $result = $conn->query($sql);
                 margin-top: 10px;
                 display: flex;
                 justify-content: center;
-                width: 30%; 
-                max-width: 100px; 
+                width: 30%;
+                max-width: 100px;
             }
-            }
+        }
         }
 
         /* Button Styles */
@@ -354,12 +355,20 @@ $result = $conn->query($sql);
             padding-top: 2rem;
             padding-bottom: 2rem;
         }
+
+        .custom-close-button {
+        top: 10px; /* Adjusts the vertical position */
+        right: 10px; /* Adjusts the horizontal position */
+        position: absolute; /* Keeps it positioned relative to the modal */
+        z-index: 1; /* Ensures it stays above other elements */
+    }
+
     </style>
 </head>
 
 <body>
 
-    
+
     <nav class="navbar navbar-expand-lg bg-light shadow" id="navbar">
         <div class="container-fluid d-flex align-items-center flex-column">
             <!-- Logo and Text -->
@@ -368,7 +377,8 @@ $result = $conn->query($sql);
                 <span>Matt Destinations Travel and Tours</span>
             </a>
             <!-- Toggler for small screens -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <!-- Navbar menu -->
@@ -376,9 +386,12 @@ $result = $conn->query($sql);
                 <ul class="navbar-nav ms-auto">
                     <!-- Shopping Cart link -->
                     <li class="nav-item">
-                        <a class="nav-link position-relative" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+                        <a class="nav-link position-relative" href="#" data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
                             <i class="fas fa-suitcase"></i> Travel Bag
-                            <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                            <span id="cartBadge"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="display: none;">
                                 0
                             </span>
                         </a>
@@ -386,17 +399,24 @@ $result = $conn->query($sql);
 
                     <!-- Profile Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user"></i> Profile
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#accountDetailsModal"><i class="fas fa-id-badge"></i> Account Details</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#bookingsModal"><i class="fas fa-calendar-alt"></i> My Bookings</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#reviewsModal"><i class="fas fa-star"></i> My Reviews</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#accountDetailsModal"><i class="fas fa-id-badge"></i> Account
+                                    Details</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#bookingsModal"><i class="fas fa-calendar-alt"></i> My Bookings</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                    data-bs-target="#reviewsModal"><i class="fas fa-star"></i> My Reviews</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt"></i>
+                                    Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -426,11 +446,12 @@ $result = $conn->query($sql);
             <!-- Proceed to Checkout Button -->
             <button id="proceedToCheckout" class="btn btn-primary">Proceed to Checkout</button>
         </div>
-        
+
     </div>
 
     <!-- Profile Modal Example -->
-    <div class="modal fade" id="accountDetailsModal" tabindex="-1" aria-labelledby="accountDetailsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="accountDetailsModal" tabindex="-1" aria-labelledby="accountDetailsModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -448,55 +469,56 @@ $result = $conn->query($sql);
             </div>
         </div>
     </div>
-<!-- My Bookings Modal -->
-<div class="modal fade" id="bookingsModal" tabindex="-1" aria-labelledby="bookingsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookingsModalLabel">My Bookings</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-           <div class="modal-body">
-    <?php
-    // Assuming $username is available and you're fetching bookings for the logged-in user
-    $query = "SELECT * FROM bookings WHERE username = '$username'";
-    $bookings_result = $conn->query($query);
+    <!-- My Bookings Modal -->
+    <div class="modal fade" id="bookingsModal" tabindex="-1" aria-labelledby="bookingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookingsModalLabel">My Bookings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <?php
+                    // Assuming $username is available and you're fetching bookings for the logged-in user
+                    $query = "SELECT * FROM bookings WHERE username = '$username'";
+                    $bookings_result = $conn->query($query);
 
-    if ($bookings_result->num_rows > 0): ?>
-        <ul class="list-group">
-            <?php while ($booking = $bookings_result->fetch_assoc()): ?>
-                <li class="list-group-item">
-                    <strong>Booking ID:</strong> <?php echo htmlspecialchars($booking['id']); ?><br>
-                    <strong>Username:</strong> <?php echo htmlspecialchars($booking['username']); ?><br>
-                    <strong>Email:</strong> <?php echo htmlspecialchars($booking['email']); ?><br>
-                    <strong>Contact Number:</strong> <?php echo htmlspecialchars($booking['contact_number']); ?><br>
-                    <strong>Total Price:</strong> <?php echo htmlspecialchars($booking['total_price']); ?><br>
-                    <strong>Booking Date:</strong> <?php echo htmlspecialchars($booking['booking_date']); ?><br>
-                    <button type="button" class="btn btn-primary" 
-                            data-id="<?php echo htmlspecialchars($booking['id']); ?>"
-                            data-username="<?php echo htmlspecialchars($booking['username']); ?>"
-                            data-email="<?php echo htmlspecialchars($booking['email']); ?>"
-                            data-contact="<?php echo htmlspecialchars($booking['contact_number']); ?>"
-                            data-price="<?php echo htmlspecialchars($booking['total_price']); ?>"
-                            data-date="<?php echo htmlspecialchars($booking['booking_date']); ?>"
-                            onclick="printBooking(this)">Print Confirmation</button>
-                </li>
-            <?php endwhile; ?>
-        </ul>
-    <?php else: ?>
-        <p>No bookings available at the moment.</p>
-    <?php endif; ?>
-</div>
+                    if ($bookings_result->num_rows > 0): ?>
+                        <ul class="list-group">
+                            <?php while ($booking = $bookings_result->fetch_assoc()): ?>
+                                <li class="list-group-item">
+                                    <strong>Booking ID:</strong> <?php echo htmlspecialchars($booking['id']); ?><br>
+                                    <strong>Username:</strong> <?php echo htmlspecialchars($booking['username']); ?><br>
+                                    <strong>Email:</strong> <?php echo htmlspecialchars($booking['email']); ?><br>
+                                    <strong>Contact Number:</strong>
+                                    <?php echo htmlspecialchars($booking['contact_number']); ?><br>
+                                    <strong>Total Price:</strong> <?php echo htmlspecialchars($booking['total_price']); ?><br>
+                                    <strong>Booking Date:</strong> <?php echo htmlspecialchars($booking['booking_date']); ?><br>
+                                    <button type="button" class="btn btn-primary"
+                                        data-id="<?php echo htmlspecialchars($booking['id']); ?>"
+                                        data-username="<?php echo htmlspecialchars($booking['username']); ?>"
+                                        data-email="<?php echo htmlspecialchars($booking['email']); ?>"
+                                        data-contact="<?php echo htmlspecialchars($booking['contact_number']); ?>"
+                                        data-price="<?php echo htmlspecialchars($booking['total_price']); ?>"
+                                        data-date="<?php echo htmlspecialchars($booking['booking_date']); ?>"
+                                        onclick="printBooking(this)">Print Confirmation</button>
+                                </li>
+                            <?php endwhile; ?>
+                        </ul>
+                    <?php else: ?>
+                        <p>No bookings available at the moment.</p>
+                    <?php endif; ?>
+                </div>
 
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <!-- Print Button -->
-                <button type="button" class="btn btn-primary" onclick="printBooking()">Print Confirmation</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!-- Print Button -->
+                    <button type="button" class="btn btn-primary" onclick="printBooking()">Print Confirmation</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
     <!-- My Reviews Modal -->
@@ -532,27 +554,32 @@ $result = $conn->query($sql);
     <!-- Main Content Area -->
 
     <div class="container mt-4">
-        <h2><?php echo htmlspecialchars($user['username']); ?>, let’s create your dream travel package together! Customize it to make every moment unforgettable!</h2>
+        <h2><?php echo htmlspecialchars($user['username']); ?>, let’s create your dream travel package together!
+            Customize it to make every moment unforgettable!</h2>
 
         <!-- Product Categories Tabs -->
         <ul class="nav nav-tabs mt-5" id="productTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="hotel-tab" data-bs-toggle="tab" data-bs-target="#hotel" type="button" role="tab" aria-controls="hotel" aria-selected="true">
+                <button class="nav-link active" id="hotel-tab" data-bs-toggle="tab" data-bs-target="#hotel"
+                    type="button" role="tab" aria-controls="hotel" aria-selected="true">
                     <i class="fas fa-hotel"></i> Hotels + Tour Packages
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="meals-tab" data-bs-toggle="tab" data-bs-target="#meals" type="button" role="tab" aria-controls="meals" aria-selected="false">
+                <button class="nav-link" id="meals-tab" data-bs-toggle="tab" data-bs-target="#meals" type="button"
+                    role="tab" aria-controls="meals" aria-selected="false">
                     <i class="fas fa-utensils"></i> Meals
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="ferry-tab" data-bs-toggle="tab" data-bs-target="#ferry" type="button" role="tab" aria-controls="ferry" aria-selected="false">
+                <button class="nav-link" id="ferry-tab" data-bs-toggle="tab" data-bs-target="#ferry" type="button"
+                    role="tab" aria-controls="ferry" aria-selected="false">
                     <i class="fas fa-ship"></i> Ferry Tickets
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tours-tab" data-bs-toggle="tab" data-bs-target="#tours" type="button" role="tab" aria-controls="tours" aria-selected="false">
+                <button class="nav-link" id="tours-tab" data-bs-toggle="tab" data-bs-target="#tours" type="button"
+                    role="tab" aria-controls="tours" aria-selected="false">
                     <i class="fas fa-map-marker-alt"></i> Tours
                 </button>
 
@@ -567,19 +594,26 @@ $result = $conn->query($sql);
             <div class="tab-pane fade show active" id="hotel" role="tabpanel" aria-labelledby="hotel-tab">
                 <ul class="nav nav-pills mb-3" id="hotelSubTabs" role="tablist">
                     <li class="nav-item">
-                        <button class="nav-link active" id="villa-monica-tab" data-bs-toggle="pill" data-bs-target="#villa-monica" type="button" role="tab" aria-controls="villa-monica" aria-selected="true">Villa Monica Hotel</button>
+                        <button class="nav-link active" id="villa-monica-tab" data-bs-toggle="pill"
+                            data-bs-target="#villa-monica" type="button" role="tab" aria-controls="villa-monica"
+                            aria-selected="true">Villa Monica Hotel</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" id="white-beach-tab" data-bs-toggle="pill" data-bs-target="#white-beach" type="button" role="tab" aria-controls="white-beach" aria-selected="false">White Beach Hotel</button>
+                        <button class="nav-link" id="white-beach-tab" data-bs-toggle="pill"
+                            data-bs-target="#white-beach" type="button" role="tab" aria-controls="white-beach"
+                            aria-selected="false">White Beach Hotel</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link" id="mangyan-grand-tab" data-bs-toggle="pill" data-bs-target="#mangyan-grand" type="button" role="tab" aria-controls="mangyan-grand" aria-selected="false">The Mang-Yan Grand Hotel</button>
+                        <button class="nav-link" id="mangyan-grand-tab" data-bs-toggle="pill"
+                            data-bs-target="#mangyan-grand" type="button" role="tab" aria-controls="mangyan-grand"
+                            aria-selected="false">The Mang-Yan Grand Hotel</button>
                     </li>
                 </ul>
 
                 <!-- Hotel Sub-Tab Content -->
                 <div class="tab-content" id="hotelTabContent">
-                    <div class="tab-pane fade show active" id="villa-monica" role="tabpanel" aria-labelledby="villa-monica-tab">
+                    <div class="tab-pane fade show active" id="villa-monica" role="tabpanel"
+                        aria-labelledby="villa-monica-tab">
                         <!-- Villa Monica Hotel Products -->
                         <div class="row">
                             <!-- Card Section for Map and Nearby Establishments -->
@@ -589,20 +623,27 @@ $result = $conn->query($sql);
                                         <!-- Map Section in Card -->
                                         <div class="col-md-4">
                                             <div class="map-container">
-                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d990543.556440394!2d120.35775271256784!3d14.117812795420251!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bcf97e4ff3041f%3A0xb6e958d1e330b791!2sVilla%20Monica%20Hotel%20White%20beach%20Puerto%20Galera!5e0!3m2!1sen!2sph!4v1726999182697!5m2!1sen!2sph"
-                                                    width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                                <iframe
+                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d990543.556440394!2d120.35775271256784!3d14.117812795420251!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bcf97e4ff3041f%3A0xb6e958d1e330b791!2sVilla%20Monica%20Hotel%20White%20beach%20Puerto%20Galera!5e0!3m2!1sen!2sph!4v1726999182697!5m2!1sen!2sph"
+                                                    width="100%" height="250" style="border:0;" allowfullscreen=""
+                                                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             </div>
                                         </div>
 
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <h5 class="card-title">Nearby Establishments</h5>
-                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170
+                                                        meters</small></p>
                                                 <p class="text-muted mt-3"><small>Aqua Restobar - 190 meters</small></p>
-                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 meters</small></p>
-                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small></p>
-                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 meters</small></p>
-                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 meters</small>
+                                                </p>
+                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small>
+                                                </p>
+                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church -
+                                                        650 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White
+                                                        Beach- 700 meters</small></p>
                                             </div>
                                         </div>
                                     </div>
@@ -672,35 +713,44 @@ $result = $conn->query($sql);
                     </div>
 
                     <!-- Insert Date Picker Modal Outside Loop -->
-                    <div class="modal fade" id="datePickerModal" tabindex="-1" aria-labelledby="datePickerModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="datePickerModal" tabindex="-1" aria-labelledby="datePickerModalLabel"
+                        aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="datePickerModalLabel">Select Your Preferred Dates</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <label for="modalCheckInDate" class="form-label">Check-In Date:</label>
                                     <input type="date" id="modalCheckInDate" class="form-control">
                                     <label for="modalCheckOutDate" class="form-label mt-3">Check-Out Date:</label>
                                     <input type="date" id="modalCheckOutDate" class="form-control">
-                                    <p class="mt-3"><strong>Number of Nights:</strong> <span id="numberOfNightsContainer"><span id="numberOfNights">0</span></span></p>
+                                    <p class="mt-3"><strong>Number of Nights:</strong> <span
+                                            id="numberOfNightsContainer"><span id="numberOfNights">0</span></span></p>
                                     <p id="roomCapacity" class="mt-3"><strong>Room Capacity:</strong> N/A</p>
                                     <div class="mt-3">
                                         <label class="form-label">Number of Rooms:</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusRooms">-</button>
-                                            <input type="number" id="roomsCount" class="form-control text-center" min="1" value="1" readonly>
-                                            <button class="btn btn-outline-secondary" type="button" id="plusRooms">+</button>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="minusRooms">-</button>
+                                            <input type="number" id="roomsCount" class="form-control text-center"
+                                                min="1" value="1" readonly>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="plusRooms">+</button>
                                         </div>
                                     </div>
                                     <!-- Adults Section -->
                                     <div class="mt-3">
                                         <label class="form-label">Number of Adults:</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusAdults">-</button>
-                                            <input type="number" id="adultsCount" class="form-control text-center" min="1" value="1" readonly>
-                                            <button class="btn btn-outline-secondary" type="button" id="plusAdults">+</button>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="minusAdults">-</button>
+                                            <input type="number" id="adultsCount" class="form-control text-center"
+                                                min="1" value="1" readonly>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="plusAdults">+</button>
                                         </div>
                                         <p id="pricePerHeadAdults" class="mt-2">Price Per Adult: ₱0.00</p>
                                         <p id="totalPriceAdults" class="mt-2">Total Price (Adults): ₱0.00</p>
@@ -710,9 +760,12 @@ $result = $conn->query($sql);
                                     <div class="mt-3">
                                         <label class="form-label">Number of Kids:</label>
                                         <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusKids">-</button>
-                                            <input type="number" id="kidsCount" class="form-control text-center" min="0" value="0" readonly>
-                                            <button class="btn btn-outline-secondary" type="button" id="plusKids">+</button>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="minusKids">-</button>
+                                            <input type="number" id="kidsCount" class="form-control text-center" min="0"
+                                                value="0" readonly>
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="plusKids">+</button>
                                         </div>
                                         <p id="pricePerHeadKids" class="mt-2">Price Per Kid: ₱0.00</p>
                                         <p id="totalPriceKids" class="mt-2">Total Price (Kids): ₱0.00</p>
@@ -722,7 +775,8 @@ $result = $conn->query($sql);
 
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
                                     <button type="button" id="confirmDate" class="btn btn-primary">Confirm</button>
                                 </div>
                             </div>
@@ -739,7 +793,10 @@ $result = $conn->query($sql);
                                         <!-- Map Section in Card -->
                                         <div class="col-md-4">
                                             <div class="map-container">
-                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1939.7441719435656!2d120.90291438854729!3d13.50559545622689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bcf87d7487b409%3A0x8fb820422c2be47d!2sWhite%20Beach%20Resort!5e0!3m2!1sen!2sph!4v1727655356725!5m2!1sen!2sph" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                                <iframe
+                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1939.7441719435656!2d120.90291438854729!3d13.50559545622689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bcf87d7487b409%3A0x8fb820422c2be47d!2sWhite%20Beach%20Resort!5e0!3m2!1sen!2sph!4v1727655356725!5m2!1sen!2sph"
+                                                    width="100%" height="250" style="border:0;" allowfullscreen=""
+                                                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             </div>
                                         </div>
 
@@ -747,12 +804,16 @@ $result = $conn->query($sql);
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <h5 class="card-title">Nearby Establishments</h5>
-                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170
+                                                        meters</small></p>
                                                 <p class="text-muted mt-3"><small>Aqua Restobar - 190 meters</small></p>
                                                 <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 m</small></p>
-                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small></p>
-                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 meters</small></p>
-                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small>
+                                                </p>
+                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church -
+                                                        650 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White
+                                                        Beach- 700 meters</small></p>
                                             </div>
                                         </div>
                                     </div>
@@ -825,7 +886,10 @@ $result = $conn->query($sql);
                                         <!-- Map Section in Card -->
                                         <div class="col-md-4">
                                             <div class="map-container">
-                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3879.457793758186!2d120.9005349781175!3d13.50747386904491!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bcf9ebbc3a5b69%3A0xfffb4ea6b662f43d!2sThe%20Mang-Yan%20Grand%20Hotel%20by%20Cocotel!5e0!3m2!1sen!2sph!4v1727655618184!5m2!1sen!2sph" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                                <iframe
+                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3879.457793758186!2d120.9005349781175!3d13.50747386904491!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33bcf9ebbc3a5b69%3A0xfffb4ea6b662f43d!2sThe%20Mang-Yan%20Grand%20Hotel%20by%20Cocotel!5e0!3m2!1sen!2sph!4v1727655618184!5m2!1sen!2sph"
+                                                    width="100%" height="250" style="border:0;" allowfullscreen=""
+                                                    loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             </div>
                                         </div>
 
@@ -833,12 +897,17 @@ $result = $conn->query($sql);
                                         <div class="col-md-8">
                                             <div class="card-body">
                                                 <h5 class="card-title">Nearby Establishments</h5>
-                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Marion Roos's Grill & Restobar - 170
+                                                        meters</small></p>
                                                 <p class="text-muted mt-3"><small>Aqua Restobar - 190 meters</small></p>
-                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 meters</small></p>
-                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small></p>
-                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church - 650 meters</small></p>
-                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White Beach- 700 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Polycare Pharmacy - 400 meters</small>
+                                                </p>
+                                                <p class="text-muted mt-3"><small>Itim Tattoo Shop - 250 meters</small>
+                                                </p>
+                                                <p class="text-muted mt-3"><small>San Isidro Chapel Catholic Church -
+                                                        650 meters</small></p>
+                                                <p class="text-muted mt-3"><small>Iglesia Ni Cristo Lokal ng White
+                                                        Beach- 700 meters</small></p>
                                             </div>
                                         </div>
                                     </div>
@@ -913,7 +982,10 @@ $result = $conn->query($sql);
                             $meal_id = $meal['id'];
                             echo '<div class="col-md-4 mb-4">';
                             echo '<div class="card product-card h-100">';
-                            echo '<img src="' . htmlspecialchars($meal['image_url']) . '" class="card-img-top meal-image" alt="' . htmlspecialchars($meal['name']) . '">';
+                            // Meal Image with onclick to open modal
+                            echo '<img src="' . htmlspecialchars($meal['image_url']) . '" class="card-img-top meal-image" alt="' . htmlspecialchars($meal['name']) . '"
+                            data-bs-toggle="modal" data-bs-target="#imageModal" 
+                            data-image="' . htmlspecialchars($meal['image_url']) . '" style="cursor: pointer;">';
                             echo '<div class="card-body d-flex flex-column">';
                             echo '<h5 class="card-title">' . htmlspecialchars($meal['name']) . '</h5>';
                             echo '<p class="card-text">' . htmlspecialchars($meal['description']) . '</p>';
@@ -938,121 +1010,144 @@ $result = $conn->query($sql);
                         echo "<p>No meals available at the moment.</p>";
                     }
                     ?>
-                    <!-- Meal Add to Cart Modal -->
-                    <div class="modal fade" id="mealModal" tabindex="-1" aria-labelledby="mealModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="mealModalLabel">Add Meal to Cart</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+            </div>
+
+
+            <!-- Meal Add to Cart Modal -->
+            <div class="modal fade" id="mealModal" tabindex="-1" aria-labelledby="mealModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mealModalLabel">Add Meal to Cart</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img id="mealImage" src="" alt="" class="cart-item-image me-3">
+                                <div>
+                                    <h5 id="mealName"></h5>
+                                    <p><strong>Price:</strong> ₱<span id="mealPrice"></span></p>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <img id="mealImage" src="" alt="" class="cart-item-image me-3">
-                                        <div>
-                                            <h5 id="mealName"></h5>
-                                            <p><strong>Price:</strong> ₱<span id="mealPrice"></span></p>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label for="mealQuantity" class="form-label">Quantity:</label>
-                                        <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusMealQuantityModal">-</button>
-                                            <input type="number" id="mealQuantityModal" class="form-control text-center" value="1" min="1">
-                                            <button class="btn btn-outline-secondary" type="button" id="plusMealQuantityModal">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" id="confirmMealAddToCart" class="btn btn-primary">Add to Travel Bag</button>
+                            </div>
+                            <div>
+                                <label for="mealQuantity" class="form-label">Quantity:</label>
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="minusMealQuantityModal">-</button>
+                                    <input type="number" id="mealQuantityModal" class="form-control text-center"
+                                        value="1" min="1">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="plusMealQuantityModal">+</button>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" id="confirmMealAddToCart" class="btn btn-primary">Add to Travel
+                                Bag</button>
+                        </div>
                     </div>
-
-
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="ferry" role="tabpanel" aria-labelledby="ferry-tab">
-                <div class="row">
-                    <?php
-                    $result_ferries = fetchFerries($conn);
 
-                    if ($result_ferries->num_rows > 0) {
-                        while ($ferry = $result_ferries->fetch_assoc()) {
-                            echo '<div class="col-md-4 mb-4">';
-                            echo '<div class="card product-card">';
-                            echo '<img src="' . htmlspecialchars($ferry['image_url']) . '" class="card-img-top" alt="' . htmlspecialchars($ferry['name']) . '">';
-                            echo '<div class="card-body">';
-                            echo '<h5 class="card-title">' . htmlspecialchars($ferry['name']) . '</h5>';
-                            echo '<p class="card-text">' . htmlspecialchars($ferry['description']) . '</p>';
-                            echo '<p><strong>Route:</strong> ' . htmlspecialchars($ferry['route']) . '</p>';
-                            echo '<p><strong>Schedule:</strong> ' . htmlspecialchars($ferry['schedule']) . '</p>';
-                            echo '<p><strong>Vessel:</strong> ' . htmlspecialchars($ferry['vessel']) . '</p>';
+            <!-- Meal Image Modal -->
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <img id="modalImage" src="" alt="Meal Image" class="img-fluid w-100">
+                            <!-- Close button over the image -->
+                            <button type="button" class="btn-close custom-close-button"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            if ($ferry['vessel'] === 'Fast Craft') {
-                                echo '<p><strong>Tourist Class:</strong><br>';
-                                echo 'Adult: ₱' . (isset($ferry['tourist_adult_price']) ? htmlspecialchars($ferry['tourist_adult_price']) : 'Not available') . '<br>';
-                                echo 'Senior/Student/PWD: ₱' . (isset($ferry['tourist_senior_price']) ? htmlspecialchars($ferry['tourist_senior_price']) : 'Not available') . '<br>';
-                                echo 'Kid: ₱' . (isset($ferry['tourist_kid_price']) ? htmlspecialchars($ferry['tourist_kid_price']) : 'Not available') . '<br>';
-                                echo 'Toddler: ₱' . (isset($ferry['tourist_toddler_price']) ? htmlspecialchars($ferry['tourist_toddler_price']) : 'Not available') . '</p>';
+        </div>
+    </div>
 
-                                echo '<p><strong>Business Class:</strong><br>';
-                                echo 'Adult: ₱' . (isset($ferry['business_adult_price']) ? htmlspecialchars($ferry['business_adult_price']) : 'Not available') . '<br>';
-                                echo 'Senior/Student/PWD: ₱' . (isset($ferry['business_senior_price']) ? htmlspecialchars($ferry['business_senior_price']) : 'Not available') . '<br>';
-                                echo 'Kid: ₱' . (isset($ferry['business_kid_price']) ? htmlspecialchars($ferry['business_kid_price']) : 'Not available') . '<br>';
-                                echo 'Toddler: ₱' . (isset($ferry['business_toddler_price']) ? htmlspecialchars($ferry['business_toddler_price']) : 'Not available') . '</p>';
-                            } elseif ($ferry['vessel'] === 'RORO') {
-                                echo '<p><strong>Economy Class:</strong><br>';
-                                echo 'Adult: ₱' . (isset($ferry['economy_adult_price']) ? htmlspecialchars($ferry['economy_adult_price']) : 'Not available') . '<br>';
-                                echo 'Senior/Student/PWD: ₱' . (isset($ferry['economy_senior_price']) ? htmlspecialchars($ferry['economy_senior_price']) : 'Not available') . '<br>';
-                                echo 'Kid: ₱' . (isset($ferry['economy_kid_price']) ? htmlspecialchars($ferry['economy_kid_price']) : 'Not available') . '<br>';
-                                echo 'Toddler: ₱' . (isset($ferry['economy_toddler_price']) ? htmlspecialchars($ferry['economy_toddler_price']) : 'Not available') . '</p>';
+    <div class="tab-pane fade" id="ferry" role="tabpanel" aria-labelledby="ferry-tab">
+        <div class="row">
+            <?php
+            $result_ferries = fetchFerries($conn);
 
-                                echo '<p><strong>VIP Class:</strong><br>';
-                                echo 'Adult: ₱' . (isset($ferry['vip_adult_price']) ? htmlspecialchars($ferry['vip_adult_price']) : 'Not available') . '<br>';
-                                echo 'Senior/Student/PWD: ₱' . (isset($ferry['vip_senior_price']) ? htmlspecialchars($ferry['vip_senior_price']) : 'Not available') . '<br>';
-                                echo 'Kid: ₱' . (isset($ferry['vip_kid_price']) ? htmlspecialchars($ferry['vip_kid_price']) : 'Not available') . '<br>';
-                                echo 'Toddler: ₱' . (isset($ferry['vip_toddler_price']) ? htmlspecialchars($ferry['vip_toddler_price']) : 'Not available') . '</p>';
-                            }
+            if ($result_ferries->num_rows > 0) {
+                while ($ferry = $result_ferries->fetch_assoc()) {
+                    echo '<div class="col-md-4 mb-4">';
+                    echo '<div class="card product-card">';
+                    echo '<img src="' . htmlspecialchars($ferry['image_url']) . '" class="card-img-top" alt="' . htmlspecialchars($ferry['name']) . '">';
+                    echo '<div class="card-body">';
+                    echo '<h5 class="card-title">' . htmlspecialchars($ferry['name']) . '</h5>';
+                    echo '<p class="card-text">' . htmlspecialchars($ferry['description']) . '</p>';
+                    echo '<p><strong>Route:</strong> ' . htmlspecialchars($ferry['route']) . '</p>';
+                    echo '<p><strong>Schedule:</strong> ' . htmlspecialchars($ferry['schedule']) . '</p>';
+                    echo '<p><strong>Vessel:</strong> ' . htmlspecialchars($ferry['vessel']) . '</p>';
+
+                    if ($ferry['vessel'] === 'Fast Craft') {
+                        echo '<p><strong>Tourist Class:</strong><br>';
+                        echo 'Adult: ₱' . (isset($ferry['tourist_adult_price']) ? htmlspecialchars($ferry['tourist_adult_price']) : 'Not available') . '<br>';
+                        echo 'Senior/Student/PWD: ₱' . (isset($ferry['tourist_senior_price']) ? htmlspecialchars($ferry['tourist_senior_price']) : 'Not available') . '<br>';
+                        echo 'Kid: ₱' . (isset($ferry['tourist_kid_price']) ? htmlspecialchars($ferry['tourist_kid_price']) : 'Not available') . '<br>';
+                        echo 'Toddler: ₱' . (isset($ferry['tourist_toddler_price']) ? htmlspecialchars($ferry['tourist_toddler_price']) : 'Not available') . '</p>';
+
+                        echo '<p><strong>Business Class:</strong><br>';
+                        echo 'Adult: ₱' . (isset($ferry['business_adult_price']) ? htmlspecialchars($ferry['business_adult_price']) : 'Not available') . '<br>';
+                        echo 'Senior/Student/PWD: ₱' . (isset($ferry['business_senior_price']) ? htmlspecialchars($ferry['business_senior_price']) : 'Not available') . '<br>';
+                        echo 'Kid: ₱' . (isset($ferry['business_kid_price']) ? htmlspecialchars($ferry['business_kid_price']) : 'Not available') . '<br>';
+                        echo 'Toddler: ₱' . (isset($ferry['business_toddler_price']) ? htmlspecialchars($ferry['business_toddler_price']) : 'Not available') . '</p>';
+                    } elseif ($ferry['vessel'] === 'RORO') {
+                        echo '<p><strong>Economy Class:</strong><br>';
+                        echo 'Adult: ₱' . (isset($ferry['economy_adult_price']) ? htmlspecialchars($ferry['economy_adult_price']) : 'Not available') . '<br>';
+                        echo 'Senior/Student/PWD: ₱' . (isset($ferry['economy_senior_price']) ? htmlspecialchars($ferry['economy_senior_price']) : 'Not available') . '<br>';
+                        echo 'Kid: ₱' . (isset($ferry['economy_kid_price']) ? htmlspecialchars($ferry['economy_kid_price']) : 'Not available') . '<br>';
+                        echo 'Toddler: ₱' . (isset($ferry['economy_toddler_price']) ? htmlspecialchars($ferry['economy_toddler_price']) : 'Not available') . '</p>';
+
+                        echo '<p><strong>VIP Class:</strong><br>';
+                        echo 'Adult: ₱' . (isset($ferry['vip_adult_price']) ? htmlspecialchars($ferry['vip_adult_price']) : 'Not available') . '<br>';
+                        echo 'Senior/Student/PWD: ₱' . (isset($ferry['vip_senior_price']) ? htmlspecialchars($ferry['vip_senior_price']) : 'Not available') . '<br>';
+                        echo 'Kid: ₱' . (isset($ferry['vip_kid_price']) ? htmlspecialchars($ferry['vip_kid_price']) : 'Not available') . '<br>';
+                        echo 'Toddler: ₱' . (isset($ferry['vip_toddler_price']) ? htmlspecialchars($ferry['vip_toddler_price']) : 'Not available') . '</p>';
+                    }
 
 
-                            $prices = [];
-                            if ($ferry['vessel'] === 'Fast Craft') {
-                                $prices = [
-                                    'tourist' => [
-                                        'adult' => $ferry['tourist_adult_price'],
-                                        'senior' => $ferry['tourist_senior_price'],
-                                        'kid' => $ferry['tourist_kid_price'],
-                                        'toddler' => $ferry['tourist_toddler_price']
-                                    ],
-                                    'business' => [
-                                        'adult' => $ferry['business_adult_price'],
-                                        'senior' => $ferry['business_senior_price'],
-                                        'kid' => $ferry['business_kid_price'],
-                                        'toddler' => $ferry['business_toddler_price']
-                                    ]
-                                ];
-                            } elseif ($ferry['vessel'] === 'RORO') {
-                                $prices = [
-                                    'economy' => [
-                                        'adult' => $ferry['economy_adult_price'],
-                                        'senior' => $ferry['economy_senior_price'],
-                                        'kid' => $ferry['economy_kid_price'],
-                                        'toddler' => $ferry['economy_toddler_price']
-                                    ],
-                                    'vip' => [
-                                        'adult' => $ferry['vip_adult_price'],
-                                        'senior' => $ferry['vip_senior_price'],
-                                        'kid' => $ferry['vip_kid_price'],
-                                        'toddler' => $ferry['vip_toddler_price']
-                                    ]
-                                ];
-                            }
+                    $prices = [];
+                    if ($ferry['vessel'] === 'Fast Craft') {
+                        $prices = [
+                            'tourist' => [
+                                'adult' => $ferry['tourist_adult_price'],
+                                'senior' => $ferry['tourist_senior_price'],
+                                'kid' => $ferry['tourist_kid_price'],
+                                'toddler' => $ferry['tourist_toddler_price']
+                            ],
+                            'business' => [
+                                'adult' => $ferry['business_adult_price'],
+                                'senior' => $ferry['business_senior_price'],
+                                'kid' => $ferry['business_kid_price'],
+                                'toddler' => $ferry['business_toddler_price']
+                            ]
+                        ];
+                    } elseif ($ferry['vessel'] === 'RORO') {
+                        $prices = [
+                            'economy' => [
+                                'adult' => $ferry['economy_adult_price'],
+                                'senior' => $ferry['economy_senior_price'],
+                                'kid' => $ferry['economy_kid_price'],
+                                'toddler' => $ferry['economy_toddler_price']
+                            ],
+                            'vip' => [
+                                'adult' => $ferry['vip_adult_price'],
+                                'senior' => $ferry['vip_senior_price'],
+                                'kid' => $ferry['vip_kid_price'],
+                                'toddler' => $ferry['vip_toddler_price']
+                            ]
+                        ];
+                    }
 
-                            echo '<button class="btn btn-primary" 
+                    echo '<button class="btn btn-primary" 
                 data-bs-toggle="modal" 
                 data-bs-target="#addToCartModal"
                 data-ferry-schedule="' . htmlspecialchars($ferry['schedule']) . '" 
@@ -1061,324 +1156,370 @@ $result = $conn->query($sql);
 
 
 
-                            echo '</div>'; // end card-body
-                            echo '</div>'; // end card
-                            echo '</div>'; // end col-md-4
-                        }
-                    } else {
-                        echo "<p>No ferry tickets available.</p>";
-                    }
-                    ?>
-                    <!-- Add to Cart Modal -->
-                    <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                    echo '</div>'; // end card-body
+                    echo '</div>'; // end card
+                    echo '</div>'; // end col-md-4
+                }
+            } else {
+                echo "<p>No ferry tickets available.</p>";
+            }
+            ?>
+            <!-- Add to Cart Modal -->
+            <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addToCartLabel">Add Ferry Ticket to Cart</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Date Selector -->
+                            <div class="mb-3">
+                                <label for="ferryDate" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="ferryDate" required>
+                            </div>
+
+                            <!-- Schedule Selector -->
+                            <div class="mb-3">
+                                <label for="ferrySchedule" class="form-label">Select Schedule</label>
+                                <select class="form-select" id="ferrySchedule" required>
+                                    <option selected>Select Schedule</option>
+                                </select>
+                            </div>
+
+                            <!-- Class Selector -->
+                            <div class="mb-3">
+                                <label for="ferryClass" class="form-label">Select Class</label>
+                                <select class="form-select" id="ferryClass" required>
+                                    <option selected>Select Class</option>
+                                </select>
+                            </div>
+
+                            <!-- Quantity Selectors with Prices -->
+                            <div class="mb-3">
+                                <label class="form-label">Select Quantity</label>
+                                <!-- Adult Section -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="form-label">Number of Adults:</label>
+                                    <p id="adultPrice" class="text-success mb-0">₱0.00 per adult</p>
+                                </div>
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="minusAdultQuantity">-</button>
+                                    <input type="number" id="adultQuantity" class="form-control text-center" value="1"
+                                        min="0">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="plusAdultQuantity">+</button>
+                                </div>
+
+                                <!-- Senior/Student/PWD Section -->
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <label class="form-label">Number of Seniors/Students/PWD:</label>
+                                    <p id="seniorPrice" class="text-success mb-0">₱0.00 per person</p>
+                                </div>
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="minusSeniorQuantity">-</button>
+                                    <input type="number" id="seniorQuantity" class="form-control text-center" value="0"
+                                        min="0">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="plusSeniorQuantity">+</button>
+                                </div>
+
+                                <!-- Kid Section -->
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <label class="form-label">Number of Kids:</label>
+                                    <p id="kidPrice" class="text-success mb-0">₱0.00 per kid</p>
+                                </div>
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="minusKidQuantity">-</button>
+                                    <input type="number" id="kidQuantity" class="form-control text-center" value="0"
+                                        min="0">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="plusKidQuantity">+</button>
+                                </div>
+
+                                <!-- Toddler Section -->
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <label class="form-label">Number of Toddlers:</label>
+                                    <p id="toddlerPrice" class="text-success mb-0">₱0.00 per toddler</p>
+                                </div>
+                                <div class="input-group">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="minusToddlerQuantity">-</button>
+                                    <input type="number" id="toddlerQuantity" class="form-control text-center" value="0"
+                                        min="0">
+                                    <button class="btn btn-outline-secondary" type="button"
+                                        id="plusToddlerQuantity">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="addToCartBtn">Add to Travel Bag</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tours Tab Content -->
+
+    <div class="tab-pane fade" id="tours" role="tabpanel" aria-labelledby="tours-tab">
+        <div class="row">
+            <?php if ($result->num_rows > 0) {
+                while ($tour = $result->fetch_assoc()) { ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <!-- Tour thumbnail -->
+                            <img src="<?php echo htmlspecialchars($tour['thumbnail_image']); ?>" class="card-img-top"
+                                alt="<?php echo htmlspecialchars($tour['tour_type']); ?>">
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo htmlspecialchars($tour['tour_type']); ?></h5>
+                                <p class="card-text"><strong>Duration:</strong>
+                                    <?php echo htmlspecialchars($tour['duration']); ?></p>
+                                <p class="card-text"><strong>Description:</strong>
+                                    <?php echo htmlspecialchars($tour['description']); ?></p>
+                                <p class="card-text"><strong>Price (Adult):</strong>
+                                    ₱<?php echo number_format($tour['price_adult'], 2); ?></p>
+                                <p class="card-text"><strong>Price (Kid):</strong>
+                                    ₱<?php echo number_format($tour['price_kid'], 2); ?></p>
+                                <!-- Add to Cart Button -->
+                                <button class="btn btn-success addToCartBtn" data-bs-toggle="modal"
+                                    data-bs-target="#addToCartModal<?php echo $tour['id']; ?>"
+                                    data-tour-id="<?php echo $tour['id']; ?>"
+                                    data-tour-name="<?php echo htmlspecialchars($tour['tour_type']); ?>"
+                                    data-price-adult="<?php echo $tour['price_adult']; ?>"
+                                    data-price-kid="<?php echo $tour['price_kid']; ?>">
+                                    <i class="fas fa-suitcase"></i> Add to Travel Bag
+                                </button>
+                                <!-- View More Button -->
+                                <button class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#tourModal<?php echo $tour['id']; ?>">View More</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal for Additional Tour Details -->
+                    <div class="modal fade" id="tourModal<?php echo $tour['id']; ?>" tabindex="-1"
+                        aria-labelledby="tourModalLabel<?php echo $tour['id']; ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="addToCartLabel">Add Ferry Ticket to Cart</h5>
+                                    <h5 class="modal-title" id="tourModalLabel<?php echo $tour['id']; ?>">
+                                        <?php echo htmlspecialchars($tour['tour_type']); ?></h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <!-- Date Selector -->
-                                    <div class="mb-3">
-                                        <label for="ferryDate" class="form-label">Select Date</label>
-                                        <input type="date" class="form-control" id="ferryDate" required>
-                                    </div>
-
-                                    <!-- Schedule Selector -->
-                                    <div class="mb-3">
-                                        <label for="ferrySchedule" class="form-label">Select Schedule</label>
-                                        <select class="form-select" id="ferrySchedule" required>
-                                            <option selected>Select Schedule</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Class Selector -->
-                                    <div class="mb-3">
-                                        <label for="ferryClass" class="form-label">Select Class</label>
-                                        <select class="form-select" id="ferryClass" required>
-                                            <option selected>Select Class</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Quantity Selectors with Prices -->
-                                    <div class="mb-3">
-                                        <label class="form-label">Select Quantity</label>
-                                        <!-- Adult Section -->
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <label class="form-label">Number of Adults:</label>
-                                            <p id="adultPrice" class="text-success mb-0">₱0.00 per adult</p>
+                                    <p><strong>Inclusions:</strong> <?php echo htmlspecialchars($tour['inclusion']); ?></p>
+                                    <p><strong>Exclusions:</strong> <?php echo htmlspecialchars($tour['exclusion']); ?></p>
+                                    <p><strong>Itinerary:</strong> <?php echo htmlspecialchars($tour['itinerary']); ?></p>
+                                    <p><strong>Gallery:</strong></p>
+                                    <!-- Bootstrap Carousel for Gallery -->
+                                    <div id="carousel<?php echo $tour['id']; ?>" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <?php
+                                            $galleryImages = explode(',', $tour['gallery_images']);
+                                            foreach ($galleryImages as $index => $image) {
+                                                $activeClass = $index === 0 ? 'active' : '';
+                                                echo '<div class="carousel-item ' . $activeClass . '">';
+                                                echo '<img src="' . htmlspecialchars($image) . '" class="d-block w-100" alt="Tour Image ' . ($index + 1) . '">';
+                                                echo '</div>';
+                                            } ?>
                                         </div>
-                                        <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusAdultQuantity">-</button>
-                                            <input type="number" id="adultQuantity" class="form-control text-center" value="1" min="0">
-                                            <button class="btn btn-outline-secondary" type="button" id="plusAdultQuantity">+</button>
-                                        </div>
-
-                                        <!-- Senior/Student/PWD Section -->
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <label class="form-label">Number of Seniors/Students/PWD:</label>
-                                            <p id="seniorPrice" class="text-success mb-0">₱0.00 per person</p>
-                                        </div>
-                                        <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusSeniorQuantity">-</button>
-                                            <input type="number" id="seniorQuantity" class="form-control text-center" value="0" min="0">
-                                            <button class="btn btn-outline-secondary" type="button" id="plusSeniorQuantity">+</button>
-                                        </div>
-
-                                        <!-- Kid Section -->
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <label class="form-label">Number of Kids:</label>
-                                            <p id="kidPrice" class="text-success mb-0">₱0.00 per kid</p>
-                                        </div>
-                                        <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusKidQuantity">-</button>
-                                            <input type="number" id="kidQuantity" class="form-control text-center" value="0" min="0">
-                                            <button class="btn btn-outline-secondary" type="button" id="plusKidQuantity">+</button>
-                                        </div>
-
-                                        <!-- Toddler Section -->
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <label class="form-label">Number of Toddlers:</label>
-                                            <p id="toddlerPrice" class="text-success mb-0">₱0.00 per toddler</p>
-                                        </div>
-                                        <div class="input-group">
-                                            <button class="btn btn-outline-secondary" type="button" id="minusToddlerQuantity">-</button>
-                                            <input type="number" id="toddlerQuantity" class="form-control text-center" value="0" min="0">
-                                            <button class="btn btn-outline-secondary" type="button" id="plusToddlerQuantity">+</button>
-                                        </div>
+                                        <!-- Carousel controls -->
+                                        <button class="carousel-control-prev" type="button"
+                                            data-bs-target="#carousel<?php echo $tour['id']; ?>" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button"
+                                            data-bs-target="#carousel<?php echo $tour['id']; ?>" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" id="addToCartBtn">Add to Travel Bag</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Add to Cart Modal -->
+                    <div class="modal fade" id="addToCartModal<?php echo $tour['id']; ?>" tabindex="-1"
+                        aria-labelledby="addToCartLabel<?php echo $tour['id']; ?>" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addToCartLabel<?php echo $tour['id']; ?>">Add Tour to Cart</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><strong>Tour:</strong> <span id="tourName<?php echo $tour['id']; ?>"></span></p>
+                                    <p><strong>Price per Adult:</strong> ₱<span
+                                            id="adultPrice<?php echo $tour['id']; ?>"></span></p>
+                                    <p><strong>Price per Kid:</strong> ₱<span id="kidPrice<?php echo $tour['id']; ?>"></span>
+                                    </p>
+                                    <label for="adultsCount<?php echo $tour['id']; ?>" class="form-label">Number of
+                                        Adults:</label>
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary minus" type="button">-</button>
+                                        <input type="number" id="adultsCount<?php echo $tour['id']; ?>"
+                                            class="form-control text-center" value="1" min="1">
+                                        <button class="btn btn-outline-secondary plus" type="button">+</button>
+                                    </div>
+                                    <label for="kidsCount<?php echo $tour['id']; ?>" class="form-label">Number of Kids:</label>
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary minus" type="button">-</button>
+                                        <input type="number" id="kidsCount<?php echo $tour['id']; ?>"
+                                            class="form-control text-center" value="0" min="0">
+                                        <button class="btn btn-outline-secondary plus" type="button">+</button>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary confirmAddToCart"
+                                        data-tour-id="<?php echo $tour['id']; ?>">Add to Travel Bag</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php }
+            } else {
+                echo '<p>No tours available.</p>';
+            } ?>
+        </div>
+    </div>
+    <!-- Summary Modal -->
+    <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="summaryModalLabel">Order Summary</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            </div>
+                <div class="modal-body">
+                    <div id="accountDetails">
 
-            <!-- Tours Tab Content -->
+                        <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
+                        <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
 
-            <div class="tab-pane fade" id="tours" role="tabpanel" aria-labelledby="tours-tab">
-                <div class="row">
-                    <?php if ($result->num_rows > 0) {
-                        while ($tour = $result->fetch_assoc()) { ?>
-                            <div class="col-md-4 mb-4">
-                                <div class="card">
-                                    <!-- Tour thumbnail -->
-                                    <img src="<?php echo htmlspecialchars($tour['thumbnail_image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($tour['tour_type']); ?>">
-                                    <div class="card-body">
-                                        <h5 class="card-title"><?php echo htmlspecialchars($tour['tour_type']); ?></h5>
-                                        <p class="card-text"><strong>Duration:</strong> <?php echo htmlspecialchars($tour['duration']); ?></p>
-                                        <p class="card-text"><strong>Description:</strong> <?php echo htmlspecialchars($tour['description']); ?></p>
-                                        <p class="card-text"><strong>Price (Adult):</strong> ₱<?php echo number_format($tour['price_adult'], 2); ?></p>
-                                        <p class="card-text"><strong>Price (Kid):</strong> ₱<?php echo number_format($tour['price_kid'], 2); ?></p>
-                                        <!-- Add to Cart Button -->
-                                        <button class="btn btn-success addToCartBtn" data-bs-toggle="modal" data-bs-target="#addToCartModal<?php echo $tour['id']; ?>" data-tour-id="<?php echo $tour['id']; ?>" data-tour-name="<?php echo htmlspecialchars($tour['tour_type']); ?>" data-price-adult="<?php echo $tour['price_adult']; ?>" data-price-kid="<?php echo $tour['price_kid']; ?>">
-                                            <i class="fas fa-suitcase"></i> Add to Travel Bag
-                                        </button>
-                                        <!-- View More Button -->
-                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tourModal<?php echo $tour['id']; ?>">View More</button>
-                                    </div>
-                                </div>
+                        <!-- Hidden fields for passing data to JavaScript -->
+                        <input type="hidden" id="hiddenUsername"
+                            value="<?php echo htmlspecialchars($user['username']); ?>">
+                        <input type="hidden" id="hiddenEmail" value="<?php echo htmlspecialchars($user['email']); ?>">
+
+
+                        <form id="contactForm">
+                            <div class="mb-3">
+                                <label for="contactNumber" class="form-label"><strong>Please provide a contact
+                                        number:</strong></label>
+                                <input type="tel" class="form-control" id="contactNumber"
+                                    placeholder="Enter your contact number" required>
                             </div>
-
-                            <!-- Modal for Additional Tour Details -->
-                            <div class="modal fade" id="tourModal<?php echo $tour['id']; ?>" tabindex="-1" aria-labelledby="tourModalLabel<?php echo $tour['id']; ?>" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="tourModalLabel<?php echo $tour['id']; ?>"><?php echo htmlspecialchars($tour['tour_type']); ?></h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p><strong>Inclusions:</strong> <?php echo htmlspecialchars($tour['inclusion']); ?></p>
-                                            <p><strong>Exclusions:</strong> <?php echo htmlspecialchars($tour['exclusion']); ?></p>
-                                            <p><strong>Itinerary:</strong> <?php echo htmlspecialchars($tour['itinerary']); ?></p>
-                                            <p><strong>Gallery:</strong></p>
-                                            <!-- Bootstrap Carousel for Gallery -->
-                                            <div id="carousel<?php echo $tour['id']; ?>" class="carousel slide" data-bs-ride="carousel">
-                                                <div class="carousel-inner">
-                                                    <?php
-                                                    $galleryImages = explode(',', $tour['gallery_images']);
-                                                    foreach ($galleryImages as $index => $image) {
-                                                        $activeClass = $index === 0 ? 'active' : '';
-                                                        echo '<div class="carousel-item ' . $activeClass . '">';
-                                                        echo '<img src="' . htmlspecialchars($image) . '" class="d-block w-100" alt="Tour Image ' . ($index + 1) . '">';
-                                                        echo '</div>';
-                                                    } ?>
-                                                </div>
-                                                <!-- Carousel controls -->
-                                                <button class="carousel-control-prev" type="button" data-bs-target="#carousel<?php echo $tour['id']; ?>" data-bs-slide="prev">
-                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                    <span class="visually-hidden">Previous</span>
-                                                </button>
-                                                <button class="carousel-control-next" type="button" data-bs-target="#carousel<?php echo $tour['id']; ?>" data-bs-slide="next">
-                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                    <span class="visually-hidden">Next</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Add to Cart Modal -->
-                            <div class="modal fade" id="addToCartModal<?php echo $tour['id']; ?>" tabindex="-1" aria-labelledby="addToCartLabel<?php echo $tour['id']; ?>" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="addToCartLabel<?php echo $tour['id']; ?>">Add Tour to Cart</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p><strong>Tour:</strong> <span id="tourName<?php echo $tour['id']; ?>"></span></p>
-                                            <p><strong>Price per Adult:</strong> ₱<span id="adultPrice<?php echo $tour['id']; ?>"></span></p>
-                                            <p><strong>Price per Kid:</strong> ₱<span id="kidPrice<?php echo $tour['id']; ?>"></span></p>
-                                            <label for="adultsCount<?php echo $tour['id']; ?>" class="form-label">Number of Adults:</label>
-                                            <div class="input-group mb-3">
-                                                <button class="btn btn-outline-secondary minus" type="button">-</button>
-                                                <input type="number" id="adultsCount<?php echo $tour['id']; ?>" class="form-control text-center" value="1" min="1">
-                                                <button class="btn btn-outline-secondary plus" type="button">+</button>
-                                            </div>
-                                            <label for="kidsCount<?php echo $tour['id']; ?>" class="form-label">Number of Kids:</label>
-                                            <div class="input-group mb-3">
-                                                <button class="btn btn-outline-secondary minus" type="button">-</button>
-                                                <input type="number" id="kidsCount<?php echo $tour['id']; ?>" class="form-control text-center" value="0" min="0">
-                                                <button class="btn btn-outline-secondary plus" type="button">+</button>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary confirmAddToCart" data-tour-id="<?php echo $tour['id']; ?>">Add to Travel Bag</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    <?php }
-                    } else {
-                        echo '<p>No tours available.</p>';
-                    } ?>
-                </div>
-            </div>
-            <!-- Summary Modal -->
-            <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="summaryModalLabel">Order Summary</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="accountDetails">
-
-                                <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
-                                <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-
-                                <!-- Hidden fields for passing data to JavaScript -->
-                                <input type="hidden" id="hiddenUsername" value="<?php echo htmlspecialchars($user['username']); ?>">
-                                <input type="hidden" id="hiddenEmail" value="<?php echo htmlspecialchars($user['email']); ?>">
-
-
-                                <form id="contactForm">
-                                    <div class="mb-3">
-                                        <label for="contactNumber" class="form-label"><strong>Please provide a contact number:</strong></label>
-                                        <input type="tel" class="form-control" id="contactNumber" placeholder="Enter your contact number" required>
-                                    </div>
-                                </form>
-                            </div>
-                            <div id="summaryModalContent">
-                                <!-- The cart summary will be here -->
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div id="totalPriceSummary" class="me-auto"><strong>Total Amount: ₱0.00</strong></div>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <!-- <button type="button" class="btn btn-primary" id="confirmBookingBtn">Confirm Booking</button> -->
-                             <a href="https://checkout.xendit.co/od/paymentbooking" target="_blank" class="btn btn-primary">
-                                Make Payment via GCASH
-                            </a>
-
-                        </div>
+                        </form>
+                    </div>
+                    <div id="summaryModalContent">
+                        <!-- The cart summary will be here -->
                     </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <div id="totalPriceSummary" class="me-auto"><strong>Total Amount: ₱0.00</strong></div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary" id="confirmBookingBtn">Confirm Booking</button> -->
+                    <a href="https://checkout.xendit.co/od/paymentbooking" target="_blank" class="btn btn-primary">
+                        Make Payment via GCASH
+                    </a>
 
-            <!-- Payment Modal -->
-<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="paymentModalLabel">Payment Form</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="paymentForm" action="confirmBooking.php" method="POST">
-                    <!-- Payment Method Selection -->
-                    <div class="mb-3">
-                        <label for="paymentMethod" class="form-label"><strong>Select Payment Method:</strong></label>
-                        <div class="d-flex">
-                            <!-- Credit Card Option -->
-                            <div class="form-check me-3">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="creditCard" checked>
-                                <label class="form-check-label" for="creditCard">
-                                    <i class="fas fa-credit-card" style="font-size: 1.5em;"></i> Credit Card
-                                </label>
-                            </div>
-                            <!-- GCash Option -->
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="gcash" value="gcash">
-                                <label class="form-check-label" for="gcash">
-                                    <img src="images/gcashlogo.png" alt="GCash" style="width: 40px;"> GCash
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Credit Card Payment Fields -->
-                    <div id="creditCardFields">
-                        <div class="mb-3">
-                            <label for="cardNumber" class="form-label"><strong>Card Number</strong></label>
-                            <input type="text" class="form-control" id="cardNumber" name="cardNumber" placeholder="Enter your card number" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="expiryDate" class="form-label"><strong>Expiry Date</strong></label>
-                            <input type="text" class="form-control" id="expiryDate" name="expiryDate" placeholder="MM/YY" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="cvv" class="form-label"><strong>CVV</strong></label>
-                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="Enter CVV" required>
-                        </div>
-                    </div>
-
-                    <div id="gcashFields" style="display: none;">
-                        <div class="mb-3">
-                            <label for="gcashNumber" class="form-label"><strong>GCash Mobile Number</strong></label>
-                            <input type="text" class="form-control" id="gcashNumber" name="gcashNumber" placeholder="Enter your GCash number" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="amount" class="form-label"><strong>Amount</strong></label>
-                        <input type="text" class="form-control" id="amount" name="amount" value="₱0.00" readonly>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" form="paymentForm" class="btn btn-primary" id="confirmBookingBtn">Submit Payment</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Payment Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm" action="confirmBooking.php" method="POST">
+                        <!-- Payment Method Selection -->
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label"><strong>Select Payment
+                                    Method:</strong></label>
+                            <div class="d-flex">
+                                <!-- Credit Card Option -->
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard"
+                                        value="creditCard" checked>
+                                    <label class="form-check-label" for="creditCard">
+                                        <i class="fas fa-credit-card" style="font-size: 1.5em;"></i> Credit Card
+                                    </label>
+                                </div>
+                                <!-- GCash Option -->
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" id="gcash"
+                                        value="gcash">
+                                    <label class="form-check-label" for="gcash">
+                                        <img src="images/gcashlogo.png" alt="GCash" style="width: 40px;"> GCash
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Credit Card Payment Fields -->
+                        <div id="creditCardFields">
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label"><strong>Card Number</strong></label>
+                                <input type="text" class="form-control" id="cardNumber" name="cardNumber"
+                                    placeholder="Enter your card number" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expiryDate" class="form-label"><strong>Expiry Date</strong></label>
+                                <input type="text" class="form-control" id="expiryDate" name="expiryDate"
+                                    placeholder="MM/YY" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="cvv" class="form-label"><strong>CVV</strong></label>
+                                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="Enter CVV"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div id="gcashFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="gcashNumber" class="form-label"><strong>GCash Mobile Number</strong></label>
+                                <input type="text" class="form-control" id="gcashNumber" name="gcashNumber"
+                                    placeholder="Enter your GCash number" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label"><strong>Amount</strong></label>
+                            <input type="text" class="form-control" id="amount" name="amount" value="₱0.00" readonly>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="paymentForm" class="btn btn-primary" id="confirmBookingBtn">Submit
+                        Payment</button>
+                </div>
+            </div>
         </div>
+    </div>
+
+
+    </div>
     </div>
     </div>
 
@@ -1396,14 +1537,16 @@ $result = $conn->query($sql);
             <p>DOT Accredited. Accreditation No: <strong>DOT-R4B-TOP-00558-2022</strong></p>
 
             <!-- Additional Contact Information -->
-            <p>Email: <a href="mailto:info.pgph@gmail.com" class="text-white">info.pgph@gmail.com</a> | Phone: <a href="tel:+639123456789" class="text-white">+63 912 345 6789</a></p>
+            <p>Email: <a href="mailto:info.pgph@gmail.com" class="text-white">info.pgph@gmail.com</a> | Phone: <a
+                    href="tel:+639123456789" class="text-white">+63 912 345 6789</a></p>
 
             <!-- Operating Hours -->
             <p>Operating Hours: Mon - Sun, 8:00 AM - 12:00 AM</p>
 
             <!-- Social Media Icons -->
             <div class="social-icons">
-                <a href="https://web.facebook.com/PuertoGaleraAdventures/" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://web.facebook.com/PuertoGaleraAdventures/" class="text-white me-3"><i
+                        class="fab fa-facebook-f"></i></a>
             </div>
 
             <!-- Legal Links -->
