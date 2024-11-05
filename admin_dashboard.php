@@ -496,6 +496,7 @@ thead th {
 <div id="manageHotelsSection" class="hidden">
     
     <h3>Manage Hotels</h3>
+
     <button class="btn btn-primary mb-3" id="openHotelModal">Add New Hotel</button>
     <div class="table-responsive mt-3">
         
@@ -571,6 +572,11 @@ thead th {
                         <a href="#" class="btn btn-danger btn-sm" onclick="showDeleteModal('admin_dashboard.php?delete=<?php echo $hotel['id']; ?>&category=hotels')">
                             <i class="fas fa-trash"></i>
                         </a>
+                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editHotelModal">
+                            <i class="fas fa-edit"></i> 
+                        </button>
+
+
                     </td>
         </tr>
         <!-- Modal for Adding Fully Booked Dates -->
@@ -635,154 +641,195 @@ thead th {
 
 
 
-    <!-- Edit Hotel Modal -->
-    <div class="modal fade" id="editHotelModal" tabindex="-1" aria-labelledby="editHotelLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editHotelLabel">Edit Hotel</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editHotelForm">
-                        <input type="hidden" id="edit_hotel_id" name="id">
-                        
-                        <div class="form-group">
-                            <label for="edit_hotel_name">Hotel Name</label>
-                            <input type="text" id="edit_hotel_name" name="hotel_name" class="form-control" required>
-                        </div>
+<!-- Edit Hotel Modal -->
+<div class="modal fade" id="editHotelModal" tabindex="-1" aria-labelledby="editHotelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editHotelLabel">Edit Hotel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="edit_hotel.php" method="POST" enctype="multipart/form-data">
+                    <!-- Hidden field for hotel_id -->
+                    <input type="hidden" name="hotel_id" id="hotel_id">
 
-                        <div class="mb-3">
-    <label for="edit_price_2d1n_adult" class="form-label">Price for 2D1N (Adult)</label>
-    <input type="number" class="form-control" id="edit_price_2d1n_adult" name="edit_price_2d1n_adult" step="0.01" required>
-</div>
-<div class="mb-3">
-    <label for="edit_price_2d1n_kid" class="form-label">Price for 2D1N (Kid)</label>
-    <input type="number" class="form-control" id="edit_price_2d1n_kid" name="edit_price_2d1n_kid" step="0.01" required>
-</div>
-<div class="mb-3">
-    <label for="edit_price_3d2n_adult" class="form-label">Price for 3D2N (Adult)</label>
-    <input type="number" class="form-control" id="edit_price_3d2n_adult" name="edit_price_3d2n_adult" step="0.01" required>
-</div>
-<div class="mb-3">
-    <label for="edit_price_3d2n_kid" class="form-label">Price for 3D2N (Kid)</label>
-    <input type="number" class="form-control" id="edit_price_3d2n_kid" name="edit_price_3d2n_kid" step="0.01" required>
-</div>
-<div class="mb-3">
-    <label for="edit_price_4d3n_adult" class="form-label">Price for 4D3N (Adult)</label>
-    <input type="number" class="form-control" id="edit_price_4d3n_adult" name="edit_price_4d3n_adult" step="0.01" required>
-</div>
-<div class="mb-3">
-    <label for="edit_price_4d3n_kid" class="form-label">Price for 4D3N (Kid)</label>
-    <input type="number" class="form-control" id="edit_price_4d3n_kid" name="edit_price_4d3n_kid" step="0.01" required>
-</div>
-    <div class="mb-3">
-        <label for="edit_capacity" class="form-label">Capacity</label>
-        <select class="form-select" id="edit_capacity" name="edit_capacity" required>
-            <option value="2 pax">2 Pax</option>
-            <option value="3 pax">3 Pax</option>
-            <option value="4 pax">4 Pax</option>
-            <option value="5 pax">5 Pax</option>
-            <option value="6 pax">6 Pax</option>
-        </select>
-    </div>
+                    <!-- Hotel Name -->
+                    <div class="mb-3">
+                        <label for="hotel_select_edit" class="form-label">Select Hotel</label>
+                        <select class="form-select" id="hotel_select_edit" name="hotel_name" required>
+                            <option value="Villa Monica Hotel">Villa Monica Hotel</option>
+                            <option value="White Beach Hotel">White Beach Hotel</option>
+                            <option value="The Mang-Yan Grand Hotel">The Mang-Yan Grand Hotel</option>
+                        </select>   
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit_check_in">Check-In Time</label>
-                            <input type="time" id="edit_check_in" name="check_in" class="form-control" required>
-                        </div>
+                    <!-- Thumbnail Image Upload -->
+                    <div class="mb-3">
+                        <label for="hotel_thumbnail_edit" class="form-label">Hotel Thumbnail Image</label>
+                        <input type="file" class="form-control" id="hotel_thumbnail_edit" name="thumbnail_image"> 
+                        <div id="thumbnailPreviewEdit" class="mt-3"></div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit_check_out">Check-Out Time</label>
-                            <input type="time" id="edit_check_out" name="check_out" class="form-control" required>
-                        </div>
+                    <!-- Gallery Images -->
+                    <div class="mb-3">
+                        <label for="hotel_images_edit" class="form-label">Hotel Image Gallery</label>
+                        <input type="file" class="form-control" id="hotel_images_edit" name="gallery_images[]" multiple>
+                        <div id="imagePreviewEdit" class="mt-3"></div>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit_features">Features</label>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_wifi" name="features[]" value="Free Wifi" class="form-check-input">
-                                <label for="edit_feature_wifi" class="form-check-label">Free Wifi</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_breakfast" name="features[]" value="Free Breakfast" class="form-check-input">
-                                <label for="edit_feature_breakfast" class="form-check-label">Free Breakfast</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_pool" name="features[]" value="Swimming Pool" class="form-check-input">
-                                <label for="edit_feature_pool" class="form-check-label">Swimming Pool</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_pet" name="features[]" value="Pet Friendly" class="form-check-input">
-                                <label for="edit_feature_pet" class="form-check-label">Pet Friendly</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_non_beachfront" name="features[]" value="Non Beachfront" class="form-check-input">
-                                <label for="edit_feature_non_beachfront" class="form-check-label">Non Beachfront</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_beachfront" name="features[]" value="Beachfront" class="form-check-input">
-                                <label for="edit_feature_beachfront" class="form-check-label">Beachfront</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_kitchen" name="features[]" value="With Kitchen" class="form-check-input">
-                                <label for="edit_feature_kitchen" class="form-check-label">With Kitchen</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_grilling_area" name="features[]" value="With Grilling Area" class="form-check-input">
-                                <label for="edit_feature_grilling_area" class="form-check-label">With Grilling Area</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_non_smoking" name="features[]" value="Non Smoking" class="form-check-input">
-                                <label for="edit_feature_non_smoking" class="form-check-label">Non Smoking</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="checkbox" id="edit_feature_double_bed" name="features[]" value="Double Sized Bed" class="form-check-input">
-                                <label for="edit_feature_double_bed" class="form-check-label">Double Sized Bed</label>
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="edit_description">Description</label>
-                            <textarea id="edit_description" name="description" rows="4" class="form-control" required></textarea>
-                        </div>
-
-                        <div class="mb-3">
-                        <label for="thumbnail_image" class="form-label">Thumbnail Image</label>
-                        <input type="file" class="form-control" id="thumbnail_image" name="thumbnail_image" accept="image/*" required>
+                    <!-- Price Fields -->
+                    <div class="mb-3">
+                        <label for="price_2d1n_adult_edit" class="form-label">Price for 2D1N (Adult)</label>
+                        <input type="number" class="form-control" id="price_2d1n_adult_edit" name="price_2d1n_adult" step="0.01">
                     </div>
                     <div class="mb-3">
-                        <label for="gallery_images" class="form-label">Gallery Images</label>
-                        <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" accept="image/*" multiple required>
+                        <label for="price_2d1n_kid_edit" class="form-label">Price for 2D1N (Kid)</label>
+                        <input type="number" class="form-control" id="price_2d1n_kid_edit" name="price_2d1n_kid" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_3d2n_adult_edit" class="form-label">Price for 3D2N (Adult)</label>
+                        <input type="number" class="form-control" id="price_3d2n_adult_edit" name="price_3d2n_adult" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_3d2n_kid_edit" class="form-label">Price for 3D2N (Kid)</label>
+                        <input type="number" class="form-control" id="price_3d2n_kid_edit" name="price_3d2n_kid" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_4d3n_adult_edit" class="form-label">Price for 4D3N (Adult)</label>
+                        <input type="number" class="form-control" id="price_4d3n_adult_edit" name="price_4d3n_adult" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label for="price_4d3n_kid_edit" class="form-label">Price for 4D3N (Kid)</label>
+                        <input type="number" class="form-control" id="price_4d3n_kid_edit" name="price_4d3n_kid" step="0.01">
                     </div>
 
-                        <div class="form-group">
-                            <label for="edit_inclusions">Inclusions</label>
-                            <textarea id="edit_inclusions" name="inclusions" rows="2" class="form-control" required></textarea>
-                        </div>
+                    <!-- Capacity -->
+                    <div class="mb-3">
+                        <label for="capacity_edit" class="form-label">Capacity</label>
+                        <select class="form-select" id="capacity_edit" name="capacity">
+                            <option value="2 pax">2 Pax</option>
+                            <option value="3 pax">3 Pax</option>
+                            <option value="4 pax">4 Pax</option>
+                            <option value="5 pax">5 Pax</option>
+                            <option value="6 pax">6 Pax</option>
+                        </select>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit_exclusions">Exclusions</label>
-                            <textarea id="edit_exclusions" name="exclusions" rows="2" class="form-control" required></textarea>
-                        </div>
+                    <!-- Check-in and Check-out Times -->
+                    <div class="mb-3">
+                        <label for="check_in_edit" class="form-label">Check-in Time</label>
+                        <input type="time" class="form-control" id="check_in_edit" name="check_in">
+                    </div>
+                    <div class="mb-3">
+                        <label for="check_out_edit" class="form-label">Check-out Time</label>
+                        <input type="time" class="form-control" id="check_out_edit" name="check_out">
+                    </div>
 
-                        <div class="form-group">
-                            <label for="edit_policy">Policy</label>
-                            <textarea id="edit_policy" name="policy" rows="3" class="form-control" required></textarea>
-                        </div>
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label for="description_edit" class="form-label">Description</label>
+                        <textarea class="form-control" id="description_edit" name="description" rows="3"></textarea>
+                    </div>
 
-                       <div class="form-group">
-                            <label for="edit_fully_booked_dates">Fully Booked Dates</label>
-                            <input type="text" id="edit_fully_booked_dates" name="fully_booked_dates" class="form-control" readonly>
-                            <button type="button" class="btn btn-secondary" id="edit_select_dates">Select Dates</button>
+                    <!-- Features Checkboxes -->
+                    <div class="mb-3">
+                        <label class="form-label">Features</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_wifi_edit" name="features[]" value="Free Wifi">
+                            <label class="form-check-label" for="feature_wifi_edit">
+                                <i class="fas fa-wifi"></i> Free Wifi
+                            </label>
                         </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_breakfast_edit" name="features[]" value="Free Breakfast">
+                            <label class="form-check-label" for="feature_breakfast_edit">
+                                <i class="fas fa-bacon"></i> Free Breakfast
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_pool_edit" name="features[]" value="Swimming Pool">
+                            <label class="form-check-label" for="feature_pool_edit">
+                                <i class="fas fa-swimming-pool"></i> Swimming Pool
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_pet_friendly_edit" name="features[]" value="Pet Friendly">
+                            <label class="form-check-label" for="feature_pet_friendly_edit">
+                                <i class="fas fa-dog"></i> Pet Friendly
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_non_beachfront_edit" name="features[]" value="Non Beachfront">
+                            <label class="form-check-label" for="feature_non_beachfront_edit">
+                                <i class="fas fa-umbrella-beach"></i> Non Beachfront
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_beachfront_edit" name="features[]" value="Beachfront">
+                            <label class="form-check-label" for="feature_beachfront_edit">
+                                <i class="fas fa-sun"></i> Beachfront
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_kitchen_edit" name="features[]" value="With Kitchen">
+                            <label class="form-check-label" for="feature_kitchen_edit">
+                                <i class="fas fa-utensils"></i> With Kitchen
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_grilling_area_edit" name="features[]" value="With Grilling Area">
+                            <label class="form-check-label" for="feature_grilling_area_edit">
+                                <i class="fas fa-fire"></i> With Grilling Area
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_non_smoking_edit" name="features[]" value="Non Smoking">
+                            <label class="form-check-label" for="feature_non_smoking_edit">
+                                <i class="fas fa-smoking-ban"></i> Non Smoking
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_double_bed_edit" name="features[]" value="Double Sized Bed">
+                            <label class="form-check-label" for="feature_double_bed_edit">
+                                <i class="fas fa-bed"></i> Double Sized Bed
+                            </label>
+                        </div>
+                        <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="feature_airconditioned_edit" name="features[]" value="Fully Airconditioned">
+        <label class="form-check-label" for="feature_airconditioned_edit">
+            <i class="fas fa-wind"></i> Fully Airconditioned
+        </label>
+    </div>
+    <!-- New Feature: Television -->
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="feature_television_edit" name="features[]" value="With Television">
+        <label class="form-check-label" for="feature_television_edit">
+            <i class="fas fa-tv"></i> With Television
+        </label>
+    </div>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
+                    <!-- Inclusions, Exclusions, and Policy -->
+                    <div class="mb-3">
+                        <label for="inclusions_edit" class="form-label">Inclusions</label>
+                        <textarea class="form-control" id="inclusions_edit" name="inclusions" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exclusions_edit" class="form-label">Exclusions</label>
+                        <textarea class="form-control" id="exclusions_edit" name="exclusions" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="policy_edit" class="form-label">Policy</label>
+                        <textarea class="form-control" id="policy_edit" name="policy" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
  
 
@@ -1237,7 +1284,21 @@ thead th {
                                 <i class="fas fa-bed"></i> Double Sized Bed
                             </label>
                         </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_airconditioned" name="features[]" value="Fully Airconditioned">
+                            <label class="form-check-label" for="feature_airconditioned">
+                                <i class="fas fa-wind"></i> Fully Airconditioned
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="feature_television" name="features[]" value="With Television">
+                            <label class="form-check-label" for="feature_television">
+                                <i class="fas fa-tv"></i> With Television
+                            </label>
+                        </div>  
                     </div>
+                    
 
                         <div class="mb-3">
                             <label for="inclusions" class="form-label">Inclusions</label>
