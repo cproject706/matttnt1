@@ -10,7 +10,7 @@ include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form inputs
-    $hotel_id = $_POST['id'];
+    $hotel_id = $_POST['hotel_id'];  
     $name = $_POST['hotel_name'];
     $price_2d1n_adult = $_POST['price_2d1n_adult'];
     $price_2d1n_kid = $_POST['price_2d1n_kid'];
@@ -25,114 +25,95 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $description = $_POST['description'];
     $features = isset($_POST['features']) ? implode(', ', $_POST['features']) : '';
 
-    // Handle check-in and check-out time to be in AM/PM format
-    $check_in = $_POST['check_in'];
-    $check_out = $_POST['check_out'];
-
     // Convert check-in and check-out times to AM/PM format
-    $check_in_time = DateTime::createFromFormat('H:i', $check_in)->format('h:i A');
-    $check_out_time = DateTime::createFromFormat('H:i', $check_out)->format('h:i A');
+    $check_in = DateTime::createFromFormat('H:i', $_POST['check_in'])->format('h:i A');
+    $check_out = DateTime::createFromFormat('H:i', $_POST['check_out'])->format('h:i A');
 
     // Handle Thumbnail Upload
+    $thumbnailPath = null;
     if (isset($_FILES['thumbnail_image']) && $_FILES['thumbnail_image']['error'] === 0) {
-        $thumbnail = $_FILES['thumbnail_image'];
-        $thumbnailName = time() . '_thumbnail_' . $thumbnail['name'];
-        if (move_uploaded_file($thumbnail['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/matttnt/images/' . $thumbnailName)) {
-            $thumbnailPath = 'images/' . $thumbnailName;
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Failed to upload the thumbnail image.']);
-            exit();
+        $thumbnailName = time() . '_thumbnail_' . $_FILES['thumbnail_image']['name'];
+        $thumbnailPath = 'images/' . $thumbnailName;
+        if (!move_uploaded_file($_FILES['thumbnail_image']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/matttnt/' . $thumbnailPath)) {
+            echo "Failed to upload the thumbnail image.";
+            $thumbnailPath = null;
         }
-    } else {
-        $thumbnailPath = null;
     }
 
-    $galleryPaths = [];
-
     // Handle Gallery Images Upload
+    $galleryPaths = [];
     if (isset($_FILES['gallery_images'])) {
         foreach ($_FILES['gallery_images']['tmp_name'] as $key => $tmpName) {
             if ($_FILES['gallery_images']['error'][$key] === 0) {
                 $galleryName = time() . '_' . $key . '_' . $_FILES['gallery_images']['name'][$key];
                 $targetPath = $_SERVER['DOCUMENT_ROOT'] . '/matttnt/images/' . $galleryName;
-
                 if (move_uploaded_file($tmpName, $targetPath)) {
                     $galleryPaths[] = 'images/' . $galleryName;
                 } else {
-                    echo json_encode(['success' => false, 'error' => "Failed to upload gallery image: " . $_FILES['gallery_images']['name'][$key]]);
-                    exit();
+                    echo "Failed to upload gallery image: " . $_FILES['gallery_images']['name'][$key];
                 }
-            } else {
-                echo json_encode(['success' => false, 'error' => "Error with file upload for gallery image: " . $_FILES['gallery_images']['name'][$key] . " - Error code: " . $_FILES['gallery_images']['error'][$key]]);
-                exit();
             }
         }
     }
-
     $galleryImagesString = implode(',', $galleryPaths);
 
-    // Update hotel information
+    // Build SQL statement dynamically
     $sql = "UPDATE hotels SET 
-                name=?, 
-                check_in=?, 
-                check_out=?, 
-                features=?, 
-                capacity=?, 
-                description=?, 
-                inclusions=?, 
-                exclusions=?, 
-                policy=?, 
-                price_2d1n_adult=?, 
-                price_2d1n_kid=?, 
-                price_3d2n_adult=?, 
-                price_3d2n_kid=?, 
-                price_4d3n_adult=?, 
-                price_4d3n_kid=?, 
-                thumbnail_image=?, 
-                gallery_images=? 
-            WHERE id=?";
+            name = ?, 
+            check_in = ?, 
+            check_out = ?, 
+            features = ?, 
+            capacity = ?, 
+            description = ?, 
+            inclusions = ?, 
+            exclusions = ?, 
+            policy = ?, 
+            price_2d1n_adult = ?, 
+            price_2d1n_kid = ?, 
+            price_3d2n_adult = ?, 
+            price_3d2n_kid = ?, 
+            price_4d3n_adult = ?, 
+            price_4d3n_kid = ?";
+    
+ 
+    $params = [
+        &$name, &$check_in, &$check_out, &$features, &$capacity,
+        &$description, &$inclusions, &$exclusions, &$policy,
+        &$price_2d1n_adult, &$price_2d1n_kid, &$price_3d2n_adult,
+        &$price_3d2n_kid, &$price_4d3n_adult, &$price_4d3n_kid
+    ];
+
+    if ($thumbnailPath) {
+        $sql .= ", thumbnail_image = ?";
+        $params[] = &$thumbnailPath;
+    }
+    if (!empty($galleryPaths)) {
+        $sql .= ", gallery_images = ?";
+        $params[] = &$galleryImagesString;
+    }
+
+    $sql .= " WHERE id = ?";
+    $params[] = &$hotel_id;
 
     $stmt = $conn->prepare($sql);
     if ($stmt === false) {
         die('Prepare failed: ' . htmlspecialchars($conn->error));
     }
 
-    $stmt->bind_param(
-        "ssssssssddddssssi",
-        $name,
-        $check_in_time,
-        $check_out_time,
-        $features,
-        $capacity,
-        $description,
-        $inclusions,
-        $exclusions,
-        $policy,
-        $price_2d1n_adult,
-        $price_2d1n_kid,
-        $price_3d2n_adult,
-        $price_3d2n_kid,
-        $price_4d3n_adult,
-        $price_4d3n_kid,
-        $thumbnailPath,
-        $galleryImagesString,
-        $hotel_id
-    );
+    // Dynamically bind parameters
+    $types = str_repeat('s', 8) . str_repeat('d', 7) . (isset($thumbnailPath) ? 's' : '') . (!empty($galleryPaths) ? 's' : '') . 'i';
+    $stmt->bind_param($types, ...$params);
 
     if ($stmt->execute()) {
-      
-        $conn->query("DELETE FROM fully_booked_dates WHERE hotel_id = $hotel_id");
-
-        $selectedDates = isset($_POST['fully_booked_dates']) ? explode(',', $_POST['fully_booked_dates']) : [];
-        foreach ($selectedDates as $date) {
-            $date = $conn->real_escape_string($date);
-            $conn->query("INSERT INTO fully_booked_dates (hotel_id, fully_booked_date) VALUES ($hotel_id, '$date')");
+        
+        if ($stmt->affected_rows > 0) {
+            header("Location: admin_dashboard.php"); 
+            exit();
+        } else {
+            echo "Update failed: No rows were affected. Please check the input data or hotel ID.";
         }
-
-        echo json_encode(['success' => true]);
-        exit();
     } else {
-        echo json_encode(['success' => false, 'error' => $stmt->error]);
+        echo "Error: " . $stmt->error;
     }
 
     $stmt->close();

@@ -36,12 +36,8 @@ $(function() {
     window.openEditModal = function(hotel) {
         $('#edit_hotel_id').val(hotel.id);
         $('#edit_hotel_name').val(hotel.name);
-        $('#edit_price_2d1n_adult').val(hotel.price_2d1n_adult);
-        $('#edit_price_2d1n_kid').val(hotel.price_2d1n_kid);
-        $('#edit_price_3d2n_adult').val(hotel.price_3d2n_adult);
-        $('#edit_price_3d2n_kid').val(hotel.price_3d2n_kid);
-        $('#edit_price_4d3n_adult').val(hotel.price_4d3n_adult);
-        $('#edit_price_4d3n_kid').val(hotel.price_4d3n_kid);
+        $('#edit_price_adult').val(hotel.price_adult);
+        $('#edit_price_kid').val(hotel.price_kid);
         $('#edit_check_in').val(hotel.check_in);
         $('#edit_check_out').val(hotel.check_out);
         $('#edit_capacity').val(hotel.capacity);
@@ -56,7 +52,7 @@ $(function() {
         $('#edit_fully_booked_dates').val(fullyBookedDates.join(','));
         $('#edit_fully_booked_dates').datepicker('refresh'); 
 
-        
+        // Set features checkboxes
         $('#edit_feature_wifi').prop('checked', hotel.features.includes('Free Wifi'));
         $('#edit_feature_breakfast').prop('checked', hotel.features.includes('Free Breakfast'));
         $('#edit_feature_pool').prop('checked', hotel.features.includes('Swimming Pool'));
@@ -81,12 +77,10 @@ $(function() {
         $.post('edit_hotel_handler.php', formData, function(response) {
             
             if (response.success) {
-                location.reload(); 
+                location.reload(); // Reload page
             } else {
                 alert('Error updating hotel: ' + response.error);
             }
         }, 'json');
     });
 });
-
-

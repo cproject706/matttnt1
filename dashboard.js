@@ -31,6 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     featureIcons += '<i class="fas fa-fire"></i> With Grilling Area<br>';
                 } else if (feature === 'Non Smoking') {
                     featureIcons += '<i class="fas fa-smoking-ban"></i> Non Smoking<br>';
+                } else if (feature === 'Fully Airconditioned') {
+                    featureIcons += '<i class="fas fa-wind"></i> Fully Airconditioned<br>';
+                } else if (feature === 'With Television') {
+                    featureIcons += '<i class="fas fa-tv"></i> With Television<br>';
                 } else if (['2 Pax', '3 Pax', '4 Pax', '5 Pax', '6 Pax'].includes(feature)) {
                     featureIcons += '<i class="fas fa-users"></i> Capacity: ' + feature + '<br>';
                 }

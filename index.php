@@ -458,8 +458,9 @@
             <div class="container">
                 <h1>Discover Your Next Adventure</h1>
                 <p>Explore the best travel package with Matt Destinations Travel and Tours</p>
-                <a href="#destinations" class="btn btn-primary btn-lg">Explore Destinations</a>
-                <a href="javascript:void(0);" class="btn btn-outline-primary btn-lg ms-3" onclick="showLogin()">Book Now</a> 
+                <a href="javascript:void(0);" class="btn btn-primary btn-lg" onclick="showLogin()">Book Now</a>
+                <a href="#destinations" class="btn btn-outline-primary btn-lg ms-3">Explore Destinations</a>
+
         </section>
 
         <!-- Hidden Login/Registration Forms -->
